@@ -35,7 +35,7 @@ namespace CSHTML5.Internal
 #endif
 
 #if CSHTML5NETSTANDARD
-    public class INTERNAL_HtmlDomStyleReference : DynamicObject
+    public class INTERNAL_HtmlDomStyleReference
 #else
     internal class INTERNAL_HtmlDomStyleReference : DynamicObject
 #endif
@@ -66,6 +66,7 @@ namespace CSHTML5.Internal
             _domElementUniqueIdentifier = elementId;
         }
 
+        /*
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             //            string javaScriptCodeToExecute = string.Format(@"
@@ -91,7 +92,7 @@ namespace CSHTML5.Internal
 #endif
 
             return true;
-        }
+        }*/
 
         void SetStylePropertyValue(string propertyName, string propertyValue)
         {

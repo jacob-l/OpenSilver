@@ -13,7 +13,11 @@
 \*====================================================================================*/
 
 
+using System;
+using System.Text.Json;
 using Microsoft.JSInterop;
+using TypeScriptDefinitionsSupport;
+using Uno.Foundation;
 
 namespace DotNetForHtml5
 {
@@ -24,12 +28,33 @@ namespace DotNetForHtml5
         // Called via reflection by the "INTERNAL_HtmlDomManager" class of the "Core" project.
         public void ExecuteJavaScript(string javaScriptToExecute)
         {
-            JSRuntime.InvokeVoidAsync("callJS", javaScriptToExecute);
+            //Console.WriteLine("EXECUTE NO RESULT JS BEFORE");
+            WebAssemblyRuntime.InvokeJS(javaScriptToExecute);
+            //Console.WriteLine("EXECUTE NO RESULT JS AFTER");
         }
 
         // Called via reflection by the "INTERNAL_HtmlDomManager" class of the "Core" project.
         public object ExecuteJavaScriptWithResult(string javaScriptToExecute)
         {
+            //Console.WriteLine("EXECUTE WITH RESULT JS BEFORE");
+            var res = WebAssemblyRuntime.InvokeJS(javaScriptToExecute);
+            //Console.WriteLine("EXECUTE WITH RESULT JS AFTER: " + res);
+
+            if (bool.TryParse(res, out var resBool))
+            {
+                //Console.WriteLine("RETURN BOOL");
+                return resBool;
+            } else if (int.TryParse(res, out var resInt))
+            {
+                //Console.WriteLine("RETURN INT");
+                return resInt;
+            } else if (double.TryParse(res, out var resDouble))
+            {
+                //Console.WriteLine("RETURN DOUBLE");
+                return resDouble;
+            }
+            return res;
+
             object result = ((JSInProcessRuntime)JSRuntime).Invoke<object>("callJS", javaScriptToExecute);
             return result;
         }

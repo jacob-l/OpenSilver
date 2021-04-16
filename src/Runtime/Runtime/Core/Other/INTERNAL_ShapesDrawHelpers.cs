@@ -157,7 +157,7 @@ namespace CSHTML5.Internal
                 }
             }
 
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
             context.translate(0.5, 0.5); //makes is less blurry for some reason.
         }
 
@@ -274,7 +274,7 @@ namespace CSHTML5.Internal
 
         internal static void PrepareLine(object canvasDomElement, Point StartPoint, Point EndPoint)
         {
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
 
             context.beginPath(); //this allows to state that we are drawing a new shape (not sure what it serves to but it is apparently good practice to always use it)
             context.moveTo(StartPoint.X, StartPoint.Y); //starting point of the line
@@ -289,7 +289,7 @@ namespace CSHTML5.Internal
 
         internal static void PrepareEllipse(object canvasDomElement, double ellipseWidth, double ellipseHeight, double centerX, double centerY)
         {
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
             //todo: StrokeThickness --> ?
 
 

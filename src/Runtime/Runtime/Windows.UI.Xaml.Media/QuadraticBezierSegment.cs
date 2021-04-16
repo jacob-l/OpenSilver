@@ -109,7 +109,7 @@ namespace Windows.UI.Xaml.Media
                                                object canvasDomElement, 
                                                Point previousLastPoint)
         {
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
 
             // tell the context that there should be a quadratic bezier curve from the starting 
             // point to this point, with the previous point as control point.

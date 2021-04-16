@@ -137,6 +137,12 @@ namespace CSHTML5.Internal
 #endif
         public static void OnCallbackFromJavaScriptError(string idWhereCallbackArgsAreStored)
         {
+            if (idWhereCallbackArgsAreStored == "-1")
+            {
+                //Console.WriteLine("INITIALIZED ON ERROR");
+                return;
+            }
+
             Action action = () =>
             {
                 string errorMessage = Convert.ToString(Interop.ExecuteJavaScript("document.jsSimulatorObjectReferences[$0][0]", idWhereCallbackArgsAreStored));
@@ -177,6 +183,12 @@ namespace CSHTML5.Internal
             )
         {
             //Console.WriteLine("ID string: " + callbackIdString);
+
+            if (callbackIdString == "-1")
+            {
+                //Console.WriteLine("INITIALIZED");
+                return;
+            }
             int callbackId = int.Parse(callbackIdString);
             object[] callbackArgsObject = new object[0];
             Action action = () =>

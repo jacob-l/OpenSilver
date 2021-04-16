@@ -42,7 +42,7 @@ namespace Windows.UI.Xaml.Media
                                                         double yOffsetToApplyAfterMultiplication, 
                                                         Size shapeActualSize)
         {
-            dynamic ctx = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var ctx = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
 
             Rect rect = Rect;
 

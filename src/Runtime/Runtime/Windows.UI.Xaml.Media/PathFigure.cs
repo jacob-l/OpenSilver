@@ -197,7 +197,7 @@ namespace Windows.UI.Xaml.Media
                                      double strokeThickness, 
                                      Size shapeActualSize)
         {
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
 
             // todo: In order to support IsFilled, add a call to context.beginPath() here 
             // (instead the call to beginPath() that is located in "Path.cs") and handle 

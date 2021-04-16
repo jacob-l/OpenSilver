@@ -42,6 +42,11 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
 		<PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0" />
+		<PackageReference Include="Tracer.Fody" Version="3.3.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Uno.Foundation.Runtime.WebAssembly" Version="3.5.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="APP_SUPPORT\JavaScriptExecutionHandler.cs" />
@@ -49,6 +54,7 @@
 		<Compile Include="Core\Main\INTERNAL_NamedObject.cs" />
 		<Compile Include="Core\Main\WeakReferenceList.cs" />
 		<Compile Include="Core\Main\WeakReferenceListEnumerator.cs" />
+		<Compile Include="LoggerHelper.cs" />
 		<Compile Include="Microsoft.Expression.Interactivity.Core\WORKINPROGRESS\ChangePropertyAction.cs" />
 		<Compile Include="Microsoft.Expression.Interactivity.Core\WORKINPROGRESS\ComparisonConditionType.cs" />
 		<Compile Include="Microsoft.Expression.Interactivity.Core\WORKINPROGRESS\ControlStoryboardAction.cs" />
@@ -1201,6 +1207,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="Runtime.licenseheader" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\OpenSilverLogger\OpenSilverLogger.csproj" />
 	</ItemGroup>
   
 	<!-- See ths comment on the first <Import> -->

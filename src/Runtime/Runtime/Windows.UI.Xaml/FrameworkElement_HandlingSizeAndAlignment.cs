@@ -62,7 +62,7 @@ namespace Windows.UI.Xaml
         {
         }
 
-        internal static void INTERNAL_InitializeOuterDomElementWidthAndHeight(FrameworkElement element, dynamic outerDomElement)
+        internal static void INTERNAL_InitializeOuterDomElementWidthAndHeight(FrameworkElement element, object outerDomElement)
         {
 #if PERFSTAT
             var t0 = Performance.now();

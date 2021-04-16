@@ -140,7 +140,7 @@ namespace Windows.UI.Xaml.Media
                                                         double yOffsetToApplyAfterMultiplication, 
                                                         Size shapeActualSize)
         {
-            dynamic ctx = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var ctx = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
 
             ctx.moveTo(StartPoint.X, StartPoint.Y);
             ctx.lineTo(EndPoint.X, EndPoint.Y);

@@ -182,7 +182,7 @@ namespace Windows.UI.Xaml.Shapes
                     // A call to "context.beginPath" is required on IE and Edge for the figures to be drawn properly (cf. ZenDesk #971):
                     CSHTML5.Interop.ExecuteJavaScriptAsync(@"$0.getContext('2d').beginPath()", _canvasDomElement);
 
-                    dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(_canvasDomElement);
+                    var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(_canvasDomElement);
 
                     // We want the Transform to be applied only while drawing with the "DefineInCanvas" method, not when applying the stroke and fill, so that the Stroke Thickness does not get affected by the transform (like in Silverlight). To do so, we save the current canvas context, then apply the transform, then draw, and then restore to the original state before applying the stroke:
                     context.save();

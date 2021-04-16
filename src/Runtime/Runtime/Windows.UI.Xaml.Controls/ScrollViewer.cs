@@ -562,8 +562,8 @@ namespace Windows.UI.Xaml.Controls
 
             // Note: the "height" and "width" of the innerDiv are handled in the methods "INTERNAL_ApplyHorizontalSettings" and "INTERNAL_ApplyVerticalSettings".
 
-            INTERNAL_ApplyHorizontalSettings(this.HorizontalScrollBarVisibility, outerDivStyle, innerDivStyle);
-            INTERNAL_ApplyVerticalSettings(this.VerticalScrollBarVisibility, outerDivStyle, innerDivStyle);
+            INTERNAL_ApplyHorizontalSettings(this.HorizontalScrollBarVisibility, (object)outerDivStyle, (object)innerDivStyle);
+            INTERNAL_ApplyVerticalSettings(this.VerticalScrollBarVisibility, (object)outerDivStyle, (object)innerDivStyle);
 
             domElementWhereToPlaceChildren = innerDiv;
             return outerDiv;

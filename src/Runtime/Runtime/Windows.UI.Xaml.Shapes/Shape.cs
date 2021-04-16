@@ -386,7 +386,7 @@ namespace Windows.UI.Xaml.Shapes
         {
             if (INTERNAL_VisualTreeManager.IsElementInVisualTree(this))
             {
-                dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(_canvasDomElement);
+                var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(_canvasDomElement);
                 context.lineWidth = StrokeThickness + "";
                 ScheduleRedraw();
             }

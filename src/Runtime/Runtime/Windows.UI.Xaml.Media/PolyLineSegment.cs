@@ -97,7 +97,7 @@ namespace Windows.UI.Xaml.Media
                                                Point previousLastPoint)
         {
             //todo: the size of the canvas
-            dynamic context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
+            var context = INTERNAL_HtmlDomManager.Get2dCanvasContext(canvasDomElement);
             foreach (Point point in Points)
             {
                 // tell the context that there should be a line from the starting point to this point

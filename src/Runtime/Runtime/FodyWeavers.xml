@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Tracer
+      adapterAssembly="OpenSilverLogger"
+      logManager="OpenSilverLogger.LogManagerAdapter"
+      logger="OpenSilverLogger.LoggerAdapter"
+      staticLogger="OpenSilverLogger.Log">
+    <TraceOn class="private" method="private" />
+  </Tracer>
+</Weavers>

@@ -20,6 +20,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using CSHTML5;
+using CSHTML5.Internal;
 
 namespace DotNetForHtml5.EmulatorWithoutJavascript
 {
@@ -38,17 +40,23 @@ namespace DotNetForHtml5.EmulatorWithoutJavascript
             LoadTypeConstructor("Windows.UI.Xaml", "System.Windows", "CornerRadius", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml", "System.Windows", "Duration", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml", "System.Windows", "GridLength", coreAssembly);
-            LoadTypeConstructor("Windows.UI.Xaml.Media.Animation", "System.Windows.Media.Animation", "KeyTime", coreAssembly);
+            System.Windows.Media.Animation.KeyTime.FromTimeSpan(TimeSpan.MinValue);
+            //LoadTypeConstructor("Windows.UI.Xaml.Media.Animation", "System.Windows.Media.Animation", "KeyTime", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media.Animation", "System.Windows.Media.Animation", "RepeatBehavior", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "Brush", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "DoubleCollection", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "FontFamily", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "Geometry", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "ImageSource", coreAssembly);
-            LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "Matrix", coreAssembly);
+            var i = System.Windows.Media.Matrix.Identity;
+            //LoadTypeConstructor("Windows.UI.Xaml.Media", "System.Windows.Media", "Matrix", coreAssembly);
             LoadTypeConstructor("Windows.UI.Xaml", "System.Windows", "PropertyPath", coreAssembly);
-            LoadTypeConstructor("Windows.UI.Xaml.Controls", "System.Windows.Controls", "DataGridLength", coreAssembly);
+            var a = System.Windows.Controls.DataGridLength.Auto;
+            //LoadTypeConstructor("Windows.UI.Xaml.Controls", "System.Windows.Controls", "DataGridLength", coreAssembly);
             LoadTypeConstructor("System.Windows.Input", null, "Cursor", coreAssembly);
+
+            OnCallBack.OnCallbackFromJavaScript("-1", "", new object[0]);
+            OnCallBack.OnCallbackFromJavaScriptError("-1");
         }
 
         static void LoadTypeConstructor(string typeNamespace, string typeAlternativeNamespaceOrNull, string typeName, Assembly assembly)

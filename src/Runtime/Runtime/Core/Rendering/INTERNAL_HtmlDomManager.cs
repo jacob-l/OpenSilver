@@ -616,12 +616,12 @@ element.remove({1});
         }
 
         // Note: "forceSimulatorExecuteImmediately" will disable the simulator optimization that consists in deferring the execution of the JavaScript code to a later time so as to group the JavaScript calls into a single call. Disabling deferral can be useful for example in the cases where we may read the value back immediately after setting it.
-        public static void SetDomElementAttribute(dynamic domElementRef, string attributeName, object attributeValue, bool forceSimulatorExecuteImmediately = false)
+        public static void SetDomElementAttribute(object domElementRef, string attributeName, object attributeValue, bool forceSimulatorExecuteImmediately = false)
         {
             if (IsRunningInJavaScript())
             {
                 //domElementRef[attributeName] = attributeValue; //todo-perfs: to improve performance on some browsers, we may want to declare the "INTERNAL_HtmlDomElementReference" as a "DynamicObject" and use the property assignment syntax everywhere in the solution instead of the "setAttribute" syntax. However in this case it may be more difficult to refact the code with the "Find All References" command.
-                domElementRef.setAttribute(attributeName, attributeValue); //todo-perfs: to improve performance on some browsers, we may want to declare the "INTERNAL_HtmlDomElementReference" as a "DynamicObject" and use the property assignment syntax everywhere in the solution instead of the "setAttribute" syntax. However in this case it may be more difficult to refact the code with the "Find All References" command.
+                ((dynamic)domElementRef).setAttribute(attributeName, attributeValue); //todo-perfs: to improve performance on some browsers, we may want to declare the "INTERNAL_HtmlDomElementReference" as a "DynamicObject" and use the property assignment syntax everywhere in the solution instead of the "setAttribute" syntax. However in this case it may be more difficult to refact the code with the "Find All References" command.
             }
             else
             {
@@ -639,7 +639,7 @@ element.remove({1});
         }
 
         // Note: "forceSimulatorExecuteImmediately" will disable the simulator optimization that consists in deferring the execution of the JavaScript code to a later time so as to group the JavaScript calls into a single call. Disabling deferral can be useful for example in the cases where we may read the value back immediately after setting it.
-        public static void SetDomElementStyleProperty(dynamic domElementRef, List<string> propertyCSSNames, object attributeValue, bool forceSimulatorExecuteImmediately = false)
+        public static void SetDomElementStyleProperty(object domElementRef, List<string> propertyCSSNames, object attributeValue, bool forceSimulatorExecuteImmediately = false)
         {
             //Note: the following implementation gives the same result as the following commented line but is more efficient. Since the style is often changed, we chose performance over simplicity on the implementation.
             //CSHTML5.Interop.ExecuteJavaScript("$0.style[$1] = $2;", domElementRef, propertyName, attributeValue);
@@ -649,7 +649,7 @@ element.remove({1});
             {
                 foreach (string propertyName in propertyCSSNames)
                 {
-                    domElementRef.style[propertyName] = attributeValue;
+                    ((dynamic)domElementRef).style[propertyName] = attributeValue;
                 }
             }
             else
@@ -719,7 +719,7 @@ element.remove({1});
 
         public static object GetDomElementAttribute(dynamic domElementRef, string attributeName)
         {
-            return Interop.ExecuteJavaScript("$0[$1]", domElementRef, attributeName);
+            return Interop.ExecuteJavaScript("$0[$1]", (object)domElementRef, attributeName);
 
             //            if (IsRunningInJavaScript())
             //            {

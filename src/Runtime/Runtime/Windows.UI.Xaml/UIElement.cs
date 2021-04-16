@@ -717,7 +717,7 @@ namespace Windows.UI.Xaml
         {
             if (INTERNAL_VisualTreeManager.IsElementInVisualTree(element))
             {
-                dynamic style = INTERNAL_HtmlDomManager.GetDomElementStyleForModification(element.INTERNAL_OuterDomElement);
+                var style = INTERNAL_HtmlDomManager.GetDomElementStyleForModification(element.INTERNAL_OuterDomElement);
                 if (element.INTERNAL_ArePointerEventsEnabled)
                 {
                     style.pointerEvents = "auto";
