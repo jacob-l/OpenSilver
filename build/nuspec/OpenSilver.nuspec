@@ -64,6 +64,9 @@
     <file src="../../src/Runtime/Controls.Data/bin/OpenSilver/$Configuration$/netstandard2.0/OpenSilver.Controls.Data.pdb" target="lib/netstandard2.0/OpenSilver.Controls.Data.pdb" />
     <file src="../../src/Runtime/Controls.Data/bin/OpenSilver/$Configuration$/netstandard2.0/OpenSilver.Controls.Data.xml" target="lib/netstandard2.0/OpenSilver.Controls.Data.xml" />
 
+    <file src="../../src/OpenSilverLogger/bin/Debug/netstandard2.0/OpenSilverLogger.dll" target="lib/netstandard2.0/OpenSilverLogger.dll" />
+    <file src="../../src/OpenSilverLogger/bin/Debug/netstandard2.0/OpenSilverLogger.pdb" target="lib/netstandard2.0/OpenSilverLogger.pdb" />
+
     <!-- OpenSilver targets -->
     <file src="../../src/Targets/$Target$.targets" target="build/$PackageId$.targets" />
     <!-- Note: the main targets file must have the same name as the package in order to be automatically imported into the end-user project. -->

@@ -39,6 +39,10 @@
 		<PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
 		<PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
 		<PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0" />
+		<PackageReference Include="Tracer.Fody" Version="3.3.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="APP_SUPPORT\JavaScriptExecutionHandler.cs" />
@@ -53,6 +57,7 @@
 		<Compile Include="Core\Main\PrePostDescendentsWalker.cs" />
 		<Compile Include="Core\Main\WeakReferenceList.cs" />
 		<Compile Include="Core\Main\WeakReferenceListEnumerator.cs" />
+		<Compile Include="LoggerHelper.cs" />
 		<Compile Include="Diagnostics\DebugInfo.cs" />
 		<Compile Include="OpenSilver\Controls\OpenFileDialog.cs" />
 		<Compile Include="OpenSilver\Internal\Clipboard.cs" />
@@ -1230,6 +1235,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\OpenSilver.Xaml\OpenSilver.Xaml.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\OpenSilverLogger\OpenSilverLogger.csproj" />
 	</ItemGroup>
 
 	<!-- See ths comment on the first <Import> -->

@@ -83,6 +83,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controls.Data.OpenSilver", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Controls.Layout.Toolkit.OpenSilver", "Runtime\Controls.Layout.Toolkit\Controls.Layout.Toolkit.OpenSilver.csproj", "{946906B2-590F-4E57-BA27-62AFDE5E1B0B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenSilverLogger", "OpenSilverLogger\OpenSilverLogger.csproj", "{6D3FBC98-EB43-43C5-9EBC-681B258C8751}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		SL|Any CPU = SL|Any CPU
@@ -175,6 +177,10 @@ Global
 		{946906B2-590F-4E57-BA27-62AFDE5E1B0B}.SL|Any CPU.Build.0 = SL|Any CPU
 		{946906B2-590F-4E57-BA27-62AFDE5E1B0B}.UWP|Any CPU.ActiveCfg = UWP|Any CPU
 		{946906B2-590F-4E57-BA27-62AFDE5E1B0B}.UWP|Any CPU.Build.0 = UWP|Any CPU
+		{6D3FBC98-EB43-43C5-9EBC-681B258C8751}.SL|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D3FBC98-EB43-43C5-9EBC-681B258C8751}.SL|Any CPU.Build.0 = Debug|Any CPU
+		{6D3FBC98-EB43-43C5-9EBC-681B258C8751}.UWP|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D3FBC98-EB43-43C5-9EBC-681B258C8751}.UWP|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
