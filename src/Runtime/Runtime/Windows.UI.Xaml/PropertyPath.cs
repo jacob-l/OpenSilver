@@ -88,7 +88,6 @@ namespace Windows.UI.Xaml
             for (int j = 0; j < count; ++j)
             {
                 type = nodes[j].Item1;
-                typeName = nodes[j].Item2.Item1;
                 propertyName = nodes[j].Item2.Item2;
                 index = nodes[j].Item2.Item3;
 
@@ -122,6 +121,8 @@ namespace Windows.UI.Xaml
                             {
                                 // Note: In OpenSilver, we want to enter this case both in the simulator and
                                 // the browser.
+                                var item1 = list[list.Count - 1].Item1;
+                                Console.WriteLine("PROPERTY PATH" + item1.GetType());
                                 targetDO = (DependencyObject)((dynamic)list[list.Count - 1].Item1)[i];
                             }
                             else

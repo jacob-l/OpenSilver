@@ -427,7 +427,7 @@ namespace CSHTML5.Internal
             // Note: in this method we sometimes use the "dynamic" keyword so that the code can be compiled also on the environments that do not have those methods.
             var assembly = (StartupAssemblyInfo.StartupAssembly ?? Assembly.GetExecutingAssembly());
 
-            string assemblyLocation = Path.GetDirectoryName((((dynamic)assembly).Location)).Replace('/', '\\');
+            string assemblyLocation = Path.GetDirectoryName(assembly.Location).Replace('/', '\\');
 
             if (!assemblyLocation.EndsWith("\\") && assemblyLocation != "")
                 assemblyLocation = assemblyLocation + '\\';
