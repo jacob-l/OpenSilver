@@ -45,5 +45,8 @@ jobs:
         run: |
           Remove-Item -Path "$($env:USERPROFILE)\.nuget\packages\OpenSilver\1.0.0" -Force -Recurse
           dotnet add src\Tests\TestApplication\TestApplication.OpenSilver.Browser\TestApplication.OpenSilver.Browser.csproj package OpenSilver -v 1.0.0 -s "$(Get-Location)\build\output\OpenSilver"
+      - name: Drop bin and obj folders
+        run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
+        shell: bash
       - name: Verify OpenSilver Solution SL Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
