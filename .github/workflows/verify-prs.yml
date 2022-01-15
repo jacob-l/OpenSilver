@@ -44,6 +44,6 @@ jobs:
       - name: Replace existing package
         run: |
           Remove-Item -Path "$($env:USERPROFILE)\.nuget\packages\OpenSilver\1.0.0" -Force -Recurse
-          build\nuget.exe install OpenSilver -Version 1.0.0 -OutputDirectory "$($env:USERPROFILE)\.nuget\packages" -Source "build\output\OpenSilver"
+          build\nuget.exe install OpenSilver -Version 1.0.0 -OutputDirectory "$($env:USERPROFILE)\.nuget\packages" -Source "$(Get-Location)\build\output\OpenSilver"
       - name: Verify OpenSilver Solution SL Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
