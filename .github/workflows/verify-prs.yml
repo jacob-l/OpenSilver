@@ -30,5 +30,13 @@ jobs:
         run: msbuild src/Compiler/Compiler/Compiler.OpenSilver.csproj -p:Configuration=SL -clp:ErrorsOnly -restore
       - name: Copy Compiler Assemblies
         run: cp src/Compiler/Compiler/bin/OpenSilver/SL/OpenSilver.Compiler*dll src/packages/OpenSilver.1.0.0/tools/;
-      - name: Build OpenSilver Solution SL Configuration
+      - name: Build OpenSilver
+        working-directory: build
+        run: msbuild slnf/OpenSilver.slnf -p:Configuration=SL -clp:ErrorsOnly -restore
+      - name: Pack OpenSilver
+        working-directory: build
+        run: |
+          mkdir temp; echo "OpenSilver 1.0.0 (${{ steps.date.outputs.datetime }})" > temp/Version.txt
+          nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0;Configuration=SL;Target=OpenSilver"
+      - name: Verify OpenSilver Solution SL Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
