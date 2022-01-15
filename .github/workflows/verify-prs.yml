@@ -1,0 +1,34 @@
+name: OpenSilver Build
+on:
+  push:
+    branches:
+      - chore/try-prs
+  # Any pull request to develop
+  pull_request:
+    branches:
+      - develop
+jobs:
+  OpenSilver-Build:
+    runs-on: windows-latest
+    steps:
+      - uses: microsoft/setup-msbuild@v1.0.3
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - name: Clone OpenSilver repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - name: Restore teamdev.licenses
+        run: 'echo "FAKE TEAMDEV LICENSE TO PREVENT BUILDING ERROR" > ./src/Simulator/Simulator/teamdev.licenses'
+        shell: bash
+      - name: Restore Packages
+        run: |
+          ./restore-packages-opensilver.bat
+          nuget restore src/OpenSilver.sln -v quiet
+      - name: Build Compiler
+        run: msbuild src/Compiler/Compiler/Compiler.OpenSilver.csproj -p:Configuration=SL -clp:ErrorsOnly -restore
+      - name: Copy Compiler Assemblies
+        run: cp src/Compiler/Compiler/bin/OpenSilver/SL/OpenSilver.Compiler*dll src/packages/OpenSilver.1.0.0/tools/;
+      - name: Build OpenSilver Solution SL Configuration
+        run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
