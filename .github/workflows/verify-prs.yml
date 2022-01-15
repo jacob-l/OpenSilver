@@ -38,5 +38,9 @@ jobs:
         run: |
           mkdir temp; echo "OpenSilver 1.0.0 (${{ steps.date.outputs.datetime }})" > temp/Version.txt
           nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0;Configuration=SL;Target=OpenSilver"
+      - name: Replace existing package
+        run: |
+          rmdir %UserProfile%/.nuget/packages/OpenSilver/1.0.0 /s
+          dotnet add package OpenSilver -v 1.0.0 -s build/output/OpenSilver
       - name: Verify OpenSilver Solution SL Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
