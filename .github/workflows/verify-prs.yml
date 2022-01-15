@@ -11,6 +11,9 @@ jobs:
   OpenSilver-Build:
     runs-on: windows-latest
     steps:
+      - name: CheckLocation
+        run: |
+          GetLocation
       - uses: microsoft/setup-msbuild@v1.0.3
       - uses: actions/setup-dotnet@v1
         with:
