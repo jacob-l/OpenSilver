@@ -11,9 +11,6 @@ jobs:
   OpenSilver-Build:
     runs-on: windows-latest
     steps:
-      - name: CheckLocation
-        run: |
-          Get-Location
       - uses: microsoft/setup-msbuild@v1.0.3
       - uses: actions/setup-dotnet@v1
         with:
@@ -23,7 +20,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
       - name: Restore teamdev.licenses
-        run: 'echo "FAKE TEAMDEV LICENSE TO PREVENT BUILDING ERROR" > ./src/Simulator/Simulator/teamdev.licenses'
+        run: 'echo "FAKE TEAMDEV LICENSE TO PREVENT BUILDING ERROR. WE DO NOT USE REAL FOR PULL REQUESTS" > ./src/Simulator/Simulator/teamdev.licenses'
         shell: bash
       - name: Restore Packages
         run: |
@@ -41,12 +38,17 @@ jobs:
         run: |
           mkdir temp; echo "OpenSilver 1.0.0 (${{ steps.date.outputs.datetime }})" > temp/Version.txt
           nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0;Configuration=SL;Target=OpenSilver"
-      - name: Replace existing package
+      - name: Replace existing package with actual one
         run: |
           Remove-Item -Path "$($env:USERPROFILE)\.nuget\packages\OpenSilver\1.0.0" -Force -Recurse
           dotnet add src\Tests\TestApplication\TestApplication.OpenSilver.Browser\TestApplication.OpenSilver.Browser.csproj package OpenSilver -v 1.0.0 -s "$(Get-Location)\build\output\OpenSilver"
-      - name: Drop bin and obj folders
+      - name: Drop all bin and obj folders
         run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
         shell: bash
       - name: Verify OpenSilver Solution SL Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=SL -clp:ErrorsOnly -restore
+      - name: Drop all bin and obj folders
+        run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
+        shell: bash
+      - name: Verify OpenSilver Solution UWP Configuration
+        run: msbuild src/OpenSilver.sln -p:Configuration=UWP -clp:ErrorsOnly -restore
