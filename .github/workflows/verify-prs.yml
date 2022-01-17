@@ -34,6 +34,7 @@ jobs:
         run: cp src/Compiler/Compiler/bin/OpenSilver/SL/OpenSilver.Compiler*dll src/packages/OpenSilver.1.0.0/tools/;
       - name: Copy Compiler UWP Assemblies
         run: cp src/Compiler/Compiler/bin/OpenSilver/UWP/OpenSilver.Compiler*dll src/packages/OpenSilver.UWPCompatible.1.0.0/tools/;
+      # There is the TestApplication for SL version in the Solution, so we need to build the latest SL package
       - name: Build OpenSilver
         working-directory: build
         run: msbuild slnf/OpenSilver.slnf -p:Configuration=SL -clp:ErrorsOnly -restore
