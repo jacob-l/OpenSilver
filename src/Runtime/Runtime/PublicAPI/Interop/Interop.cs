@@ -82,9 +82,6 @@ namespace OpenSilver
             return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: true, variables: variables);
         }
 
-#if !MIGRATION
-asdasd
-#endif
         /// <summary>
         /// Unboxes the value passed as a parameter. It is particularly useful for the variables of the ExecuteJavaScript Methods calls aimed at using third party libraries.
         /// </summary>
