@@ -26,10 +26,14 @@ jobs:
         run: |
           ./restore-packages-opensilver.bat
           nuget restore src/OpenSilver.sln -v quiet
-      - name: Build Compiler
+      - name: Build Compiler SL Configuration
         run: msbuild src/Compiler/Compiler/Compiler.OpenSilver.csproj -p:Configuration=SL -clp:ErrorsOnly -restore
-      - name: Copy Compiler Assemblies
+      - name: Build Compiler UWP Configuration
+        run: msbuild src/Compiler/Compiler/Compiler.OpenSilver.csproj -p:Configuration=UWP -clp:ErrorsOnly -restore
+      - name: Copy Compiler SL Assemblies
         run: cp src/Compiler/Compiler/bin/OpenSilver/SL/OpenSilver.Compiler*dll src/packages/OpenSilver.1.0.0/tools/;
+      - name: Copy Compiler UWP Assemblies
+        run: cp src/Compiler/Compiler/bin/OpenSilver/UWP/OpenSilver.Compiler*dll src/packages/OpenSilver.UWPCompatible.1.0.0/tools/;
       - name: Build OpenSilver
         working-directory: build
         run: msbuild slnf/OpenSilver.slnf -p:Configuration=SL -clp:ErrorsOnly -restore
@@ -52,3 +56,6 @@ jobs:
         shell: bash
       - name: Verify OpenSilver Solution UWP Configuration
         run: msbuild src/OpenSilver.sln -p:Configuration=UWP -clp:ErrorsOnly -restore
+      - name: Drop all bin and obj folders
+        run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
+        shell: bash
