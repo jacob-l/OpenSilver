@@ -2,9 +2,6 @@ name: OpenSilver Build
 env:
   actual-version: '1.0.0'
 on:
-  push:
-    branches:
-      - chore/try-prs
   # Any pull request to develop
   pull_request:
     branches:
