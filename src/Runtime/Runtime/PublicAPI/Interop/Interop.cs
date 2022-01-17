@@ -82,7 +82,7 @@ namespace OpenSilver
             return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: true, variables: variables);
         }
 
-#if MIGRATION
+#if !MIGRATION
 asdasd
 #endif
         /// <summary>

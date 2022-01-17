@@ -1,4 +1,6 @@
 name: OpenSilver Build
+env:
+  actual-version: '1.0.0'
 on:
   push:
     branches:
@@ -41,12 +43,12 @@ jobs:
       - name: Pack OpenSilver
         working-directory: build
         run: |
-          mkdir temp; echo "OpenSilver 1.0.0 (${{ steps.date.outputs.datetime }})" > temp/Version.txt
-          nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0;Configuration=SL;Target=OpenSilver"
+          mkdir temp; echo "OpenSilver ${{ env.actual-version }} (${{ steps.date.outputs.datetime }})" > temp/Version.txt
+          nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=${{ env.actual-version }};Configuration=SL;Target=OpenSilver"
       - name: Replace existing package with actual one
         run: |
-          Remove-Item -Path "$($env:USERPROFILE)\.nuget\packages\OpenSilver\1.0.0" -Force -Recurse
-          dotnet add src\Tests\TestApplication\TestApplication.OpenSilver.Browser\TestApplication.OpenSilver.Browser.csproj package OpenSilver -v 1.0.0 -s "$(Get-Location)\build\output\OpenSilver"
+          Remove-Item -Path "$($env:USERPROFILE)\.nuget\packages\OpenSilver\${{ env.actual-version }}" -Force -Recurse
+          dotnet add src\Tests\TestApplication\TestApplication.OpenSilver.Browser\TestApplication.OpenSilver.Browser.csproj package OpenSilver -v ${{ env.actual-version }} -s "$(Get-Location)\build\output\OpenSilver"
       - name: Drop all bin and obj folders
         run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
         shell: bash
