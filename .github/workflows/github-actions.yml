@@ -7,7 +7,7 @@ env:
   SHA8: "$(echo ${{ github.sha }} | cut -c1-8)"
 jobs:
   OpenSilver-Build:
-    if: github.repository_owner == 'OpenSilver'
+    if: github.repository_owner == 'jacob-l'
     runs-on: windows-latest
     steps:
       - uses: microsoft/setup-msbuild@v1.0.3
