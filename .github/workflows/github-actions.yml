@@ -55,5 +55,4 @@ jobs:
           path: "build/output/OpenSilver"
       - name: Upload packages
         run: |
-          dotnet nuget add source --username jacob-l --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/jacob-l/index.json"
-          dotnet nuget push "build\output\OpenSilver\*.nupkg" --source github
+           dotnet nuget push "build\output\OpenSilver\*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/jacob-l/index.json
