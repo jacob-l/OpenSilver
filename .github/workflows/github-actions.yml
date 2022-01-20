@@ -2,7 +2,7 @@ name: OpenSilver Build
 on:
   push:
     branches:
-      - develop
+      - try-prs
 env:
   SHA8: "$(echo ${{ github.sha }} | cut -c1-8)"
 jobs:
@@ -43,7 +43,7 @@ jobs:
         working-directory: build
         run: |
           mkdir temp; echo "OpenSilver 1.0.0-private-${{ steps.date.outputs.date }}-${{ env.SHA8 }} (${{ steps.date.outputs.datetime }})" > temp/Version.txt
-          nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0-private-${{ steps.date.outputs.date }}-${{ env.SHA8 }};Configuration=SL;Target=OpenSilver"
+          nuget.exe pack nuspec\OpenSilver.nuspec -OutputDirectory "output/OpenSilver" -Properties "PackageId=OpenSilver;PackageVersion=1.0.0-private-${{ steps.date.outputs.date }}-${{ env.SHA8 }};Configuration=SL;Target=OpenSilver;"
       - name: Pack Simulator
         working-directory: build
         run: |
@@ -53,3 +53,7 @@ jobs:
         with:
           name: OpenSilver
           path: "build/output/OpenSilver"
+      - name: Upload packages
+        run: |
+          dotnet nuget add source --username jacob-l --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/jacob-l/index.json"
+          dotnet nuget push "build\output\OpenSilver\*.nupkg" --source github
