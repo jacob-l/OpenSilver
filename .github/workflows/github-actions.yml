@@ -2,7 +2,7 @@ name: OpenSilver Build
 on:
   push:
     branches:
-      - try-prs
+      - chore/try-prs
 env:
   SHA8: "$(echo ${{ github.sha }} | cut -c1-8)"
 jobs:
