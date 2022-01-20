@@ -5,7 +5,7 @@
     <version>$PackageVersion$</version>
     <authors>Userware</authors>
     <projectUrl>http://www.opensilver.net</projectUrl>
-    <repository url="https://github.com/OpenSilver/OpenSilver" />  
+    <repository type="git" url="https://github.com/OpenSilver/OpenSilver" />  
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>OpenSilver is an open-source reimplementation of Silverlight that runs on current browsers via WebAssembly.</description>
     <copyright>Copyright (c) 2021, Userware. All rights reserved.</copyright>
