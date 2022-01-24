@@ -52,7 +52,7 @@ jobs:
         working-directory: build
         run: |
           echo "OpenSilver.Simulator 1.0.0-private-${{ steps.version.outputs.suffix }}" > temp/Version.txt
-          nuget.exe pack nuspec\OpenSilver.Simulator.nuspec -OutputDirectory "output/OpenSilver"  -BasePath "build" -Properties "PackageVersion=1.0.0-private-${{ steps.version.outputs.suffix }};RepositoryUrl=https://github.com/${{ env.GITHUB_REPOSITORY_OWNER_PART }}/OpenSilver"
+          nuget.exe pack nuspec\OpenSilver.Simulator.nuspec -OutputDirectory "output/OpenSilver"  -BasePath ".\" -Properties "PackageVersion=1.0.0-private-${{ steps.version.outputs.suffix }};RepositoryUrl=https://github.com/${{ env.GITHUB_REPOSITORY_OWNER_PART }}/OpenSilver"
       - uses: actions/upload-artifact@v2
         with:
           name: OpenSilver
