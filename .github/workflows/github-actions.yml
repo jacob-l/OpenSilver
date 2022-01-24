@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - chore/upload-packages
-env:
-  SHA8: "$(echo ${{ github.sha }} | cut -c1-8)"
 jobs:
   OpenSilver-Build:
     #We should not run these steps on the forks by default.
@@ -39,7 +37,7 @@ jobs:
         run: msbuild slnf/OpenSilver.slnf -p:Configuration=SL -clp:ErrorsOnly -restore
       - name: Format Package Version
         id: version
-        run: echo "::set-output name=suffix::$(date +'%Y-%m-%d-%H%M%S')-${{ env.SHA8 }}"
+        run: echo "::set-output name=suffix::$(date +'%Y-%m-%d-%H%M%S')-${{ env.GITHUB_SHA_SHORT }}"
       - name: Build Simulator
         working-directory: build
         run: msbuild slnf/OpenSilver.Simulator.slnf -p:Configuration=SL -clp:ErrorsOnly
