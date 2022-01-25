@@ -75,8 +75,11 @@
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-
-  <Import Project="..\..\packages\OpenSilver.$(OpenSilverVersion)\build\OpenSilver.targets" Condition=" '$(Configuration)|$(Platform)' == 'SL|AnyCPU' " />
+  <PropertyGroup>
+      <IsSLMigration>True</IsSLMigration>
+      <CompilerLocation>$(MSBuildProjectDirectory )..\Compiler\Compiler\bin\OpenSilver\SL\net461\</CompilerLocation>
+  </PropertyGroup>
+  <Import Project="..\..\Targets\OpenSilver.Common.targets" Condition=" '$(Configuration)|$(Platform)' == 'SL|AnyCPU' " />
   <Import Project="..\..\packages\OpenSilver.UWPCompatible.$(OpenSilverVersion)\build\OpenSilver.UwpCompatible.targets" Condition=" '$(Configuration)|$(Platform)' == 'UWP|AnyCPU' " />
 
 </Project>

@@ -26,14 +26,14 @@
   <!--============================================================
   LOCATION OF COMPILER TASKS
   ============================================================-->
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ServiceReferenceFixer" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResourcesProcessor" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResXProcessor" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.BeforeXamlPreprocessor" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.XamlPreprocessor" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.AfterXamlPreprocessor" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResourcesExtractorAndCopier" />
-  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.TypeScriptDefToCSharp" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ServiceReferenceFixer" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResourcesProcessor" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResXProcessor" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.BeforeXamlPreprocessor" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.XamlPreprocessor" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.AfterXamlPreprocessor" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.ResourcesExtractorAndCopier" />
+  <UsingTask AssemblyFile="$(CompilerLocation)OpenSilver.Compiler.dll" TaskName="DotNetForHtml5.Compiler.TypeScriptDefToCSharp" />
 
   <ItemGroup>
     <AvailableItemName Include="ApplicationDefinition" />
@@ -583,7 +583,7 @@
 
     <!--============================================================
       TypeScriptDefToCSharp
-      ============================================================-->
+      ============================================================
     <ItemGroup>
       <TypeScriptDefFiles Include="@(Content)" Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch('%(FullPath)', '.+\.d\.ts'))"/>
     </ItemGroup>
@@ -603,6 +603,7 @@
       <Compile
         Include="$(GeneratedFiles)"/>
     </ItemGroup>
+-->
 
     <!--============================================================
       XamlPreprocessor
