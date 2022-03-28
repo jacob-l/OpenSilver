@@ -21,7 +21,7 @@ jobs:
       - name: Restore teamdev.licenses
         run: 'echo "FAKE TEAMDEV LICENSE TO PREVENT BUILDING ERROR. WE DO NOT USE REAL FOR PULL REQUESTS" > ./src/Simulator/Simulator/teamdev.licenses'
         shell: bash
-      - name: Restore Packages
+      - name: Restore Packages OpenSilver
         run: |
           ./restore-packages-opensilver.bat
           nuget restore src/OpenSilver.sln -v quiet
@@ -65,3 +65,16 @@ jobs:
       - name: Drop all bin and obj folders
         run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
         shell: bash
+      - name: Restore Packages CSHTML5
+        run: |
+          ./restore-packages-cshtml5.bat
+          nuget restore src/CSHTML5.sln -v quiet
+      - name: Build Compiler CSHTML5 Debug Configuration
+        run: msbuild src/Compiler/Compiler/Compiler.CSHTML5.csproj -p:Configuration=Debug -clp:ErrorsOnly -restore
+      # - name: Copy Compiler CSHTML5 Debug Assemblies
+      #  run: cp src/Compiler/Compiler/bin/CSHTML5/Debug/CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.2.0.0-alpha69-089/tools/;
+      - name: Verify Building of CSHTML5 Solution Debug Configuration
+        run: msbuild src/CSHTML5.sln -p:Configuration=Debug -clp:ErrorsOnly -restore
+      # - name: Drop all bin and obj folders
+      #  run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
+      #  shell: bash
