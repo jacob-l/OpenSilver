@@ -87,11 +87,26 @@ namespace System.Windows.Browser
             }
         }
 
-		[OpenSilver.NotImplemented]
+        [OpenSilver.NotImplemented]
         public static bool IsEnabled { get; private set; }
 
-		[OpenSilver.NotImplemented]
+        [OpenSilver.NotImplemented]
         public static BrowserInformation BrowserInformation { get; private set; }
+
+        private static object ChangeType(CSHTML5.Types.INTERNAL_JSObjectReference jsObjectReference, Type type)
+        {
+            if (jsObjectReference.IsNull() || jsObjectReference.IsUndefined())
+            {
+                return null;
+            }
+
+            if (type == typeof(Guid))
+            {
+                return Guid.Parse(jsObjectReference.GetActualValue().ToString());
+            }
+
+            return Convert.ChangeType(jsObjectReference, type);
+        }
 
         /// <summary>
         /// Registers a managed object for scriptable access by JavaScript code.
@@ -122,7 +137,7 @@ namespace System.Windows.Browser
                     for (var i = 0; i < args.Length; i++)
                     {
                         jsObjectReference.ArrayIndex = i;
-                        args[i] = (jsObjectReference.IsNull() || jsObjectReference.IsUndefined()) ? null : Convert.ChangeType(jsObjectReference, parameters[i].ParameterType);
+                        args[i] = ChangeType(jsObjectReference, parameters[i].ParameterType);
                     }
                     return method.Invoke(instance, args);
                 }));
