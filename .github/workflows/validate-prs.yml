@@ -71,10 +71,16 @@ jobs:
           nuget restore src/CSHTML5.sln -v quiet
       - name: Build Compiler CSHTML5 Debug Configuration
         run: msbuild src/Compiler/Compiler/Compiler.CSHTML5.csproj -p:Configuration=Debug -clp:ErrorsOnly -restore
-      # - name: Copy Compiler CSHTML5 Debug Assemblies
-      #  run: cp src/Compiler/Compiler/bin/CSHTML5/Debug/CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.2.0.0-alpha69-089/tools/;
+      - name: Copy Compiler CSHTML5 Debug Assemblies
+        run: cp src/Compiler/Compiler/bin/CSHTML5/Debug/CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.2.0.0-alpha69-089/tools/;
       - name: Verify Building of CSHTML5 Solution Debug Configuration
         run: msbuild src/CSHTML5.sln -p:Configuration=Debug -clp:ErrorsOnly -restore
-      # - name: Drop all bin and obj folders
-      #  run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
-      #  shell: bash
+      - name: Drop all bin and obj folders
+        run: 'find . -iname "bin" -o -iname "obj" | xargs rm -rf'
+        shell: bash
+      - name: Build Compiler CSHTML5 Migration Configuration
+        run: msbuild src/Compiler/Compiler/Compiler.CSHTML5.csproj -p:Configuration=Migration -clp:ErrorsOnly -restore
+      - name: Copy Compiler CSHTML5 Migration Assemblies
+        run: cp src/Compiler/Compiler/bin/CSHTML5/Migration/CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.Migration.2.0.0-alpha69-089/tools/;
+      - name: Verify Building of CSHTML5 Solution Migration Configuration
+        run: msbuild src/CSHTML5.sln -p:Configuration=Migration -clp:ErrorsOnly -restore
