@@ -83,6 +83,6 @@ jobs:
       - name: Copy Compiler CSHTML5 Migration Assemblies
         run: |
           cp src/Compiler/Compiler/bin/CSHTML5/Migration/CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.Migration.2.0.0-alpha69-089/tools/;
-          cp src/Compiler/Compiler/bin/CSHTML5/Migration/SLMigration.CSharpXamlForHtml5.Compiler.dll src/packages/CSHTML5.Migration.2.0.0-alpha69-089/tools/;
+          cp src/Compiler/Compiler/bin/CSHTML5/Migration/SLMigration.CSharpXamlForHtml5.Compiler*dll src/packages/CSHTML5.Migration.2.0.0-alpha69-089/tools/;
       - name: Verify Building of CSHTML5 Solution Migration Configuration
         run: msbuild src/CSHTML5.sln -p:Configuration=Migration -clp:ErrorsOnly -restore
