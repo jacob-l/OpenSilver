@@ -1545,10 +1545,6 @@ else
                         valueTypeFullName.Substring("global::".Length), valueAssemblyName
                     );
 
-                    string declaringTypeName = _reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlTypeAsString(
-                        namespaceName, localTypeName, assemblyNameIfAny
-                    );
-
                     if (isAttachedProperty)
                     {
                         return ConvertFromInvariantString(
@@ -1557,11 +1553,32 @@ else
                     }
                     else
                     {
-                        return ConvertFromInvariantString(
-                            declaringTypeName, propertyName, value, valueTypeFullName, isKnownCoreType, isKnownSystemType
+                        var converterFullName = _reflectionOnSeparateAppDomain.TryToGetConvert(
+                            namespaceName, localTypeName, propertyName, assemblyNameIfAny
+                        );
+
+                        return ConvertFromInvariantStringConverter(
+                            converterFullName, value, valueTypeFullName, isKnownCoreType,
+                            isKnownSystemType
                         );
                     }
                 }
+            }
+
+            private static string ConvertFromInvariantStringConverter(
+                string converter,
+                string value,
+                string propertyType,
+                bool isKnownCoreType,
+                bool isKnownSystemType)
+            {
+                if (converter != null)
+                {
+                    return string.Format("({2})(new {0}().ConvertFromInvariantString({1}))", converter,
+                        EscapeString(value), propertyType);
+                }
+
+                return ConvertFromInvariantString(value, propertyType, isKnownCoreType, isKnownSystemType);
             }
 
             private void ChangeRelativePathIntoAbsolutePathIfNecessary(ref string path,

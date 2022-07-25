@@ -16,6 +16,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -170,6 +171,12 @@ namespace DotNetForHtml5.Compiler
             return _marshalledObject.GetCSharpEquivalentOfXamlType(namespaceName, localTypeName, assemblyIfAny, ifTypeNotFoundTryGuessing);
         }
 
+        public string TryToGetConvert(string namespaceName, string localTypeName, string propertyName,
+            string assemblyIfAny = null)
+        {
+            return _marshalledObject.GetInternalConverterFullName(namespaceName, localTypeName, propertyName, assemblyIfAny);
+        }
+        
         public string GetCSharpEquivalentOfXamlTypeAsString(string namespaceName, string localTypeName, string assemblyNameIfAny = null, bool ifTypeNotFoundTryGuessing = false)
         {
             return _marshalledObject.GetCSharpEquivalentOfXamlTypeAsString(namespaceName, localTypeName, assemblyNameIfAny, ifTypeNotFoundTryGuessing);
@@ -1030,6 +1037,37 @@ namespace DotNetForHtml5.Compiler
                 }
             }
 
+            public string GetInternalConverterFullName(string namespaceName, string localTypeName, string propertyName,
+                string assemblyIfAny = null)
+            {
+                var type = FindType(namespaceName, localTypeName, assemblyIfAny, doNotRaiseExceptionIfNotFound: false);
+                if (type == null)
+                {
+                    return null;
+                }
+
+                var property = type.GetProperties().FirstOrDefault(p => p.Name == propertyName);
+                if (property == null)
+                {
+                    return null;
+                }
+
+                var typeConverter = property.GetCustomAttribute<TypeConverterAttribute>();
+                return GetTypeFromName(typeConverter?.ConverterTypeName)?.FullName;
+            }
+
+            private Type GetTypeFromName(string typeName)
+            {
+                if (string.IsNullOrEmpty(typeName))
+                {
+                    return null;
+                }
+
+                var typeFromGetType = Type.GetType(typeName);
+
+                return typeFromGetType;
+            }
+            
             public string GetKeyNameOfProperty(string namespaceName, string localTypeName, string assemblyNameIfAny, string propertyName)
             {
                 Type type = FindType(namespaceName, localTypeName, assemblyNameIfAny);

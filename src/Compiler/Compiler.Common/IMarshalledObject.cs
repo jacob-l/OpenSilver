@@ -47,6 +47,9 @@ namespace DotNetForHtml5.Compiler.Common
 
         Type GetCSharpEquivalentOfXamlType(string namespaceName, string localTypeName, string assemblyIfAny = null, bool ifTypeNotFoundTryGuessing = false);
 
+        string GetInternalConverterFullName(string namespaceName, string localTypeName, string propertyName,
+            string assemblyIfAny = null);
+
         string GetKeyNameOfProperty(string namespaceName, string localTypeName, string assemblyNameIfAny, string propertyName);
 
         MemberTypes GetMemberType(string memberName, string namespaceName, string localTypeName, string assemblyNameIfAny = null);
