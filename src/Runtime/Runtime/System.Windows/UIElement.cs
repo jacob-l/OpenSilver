@@ -346,6 +346,8 @@ namespace Windows.UI.Xaml
             }
         }
 
+        private static int created = 0;
+        private static int deleted = 0;
         public UIElement()
         {
             DesiredSize = new Size();
@@ -360,7 +362,16 @@ namespace Windows.UI.Xaml
             IsRendered = false;
             isFirstRendering = false;
             visualLevel = -1;
+
+            Console.WriteLine("UIELEMENT CREATED - " + created++ + " deleted - " + deleted);
         }
+
+        ~UIElement()
+        {
+            deleted++;
+            Console.WriteLine("UIELEMENT DELETED - " + deleted);
+        }
+
         internal virtual object GetDomElementToSetContentString()
         {
             return INTERNAL_InnerDomElement;

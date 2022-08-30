@@ -53,14 +53,14 @@ namespace CSHTML5.Internal // IMPORTANT: if you change this namespace, make sure
         //------
         // All JavaScript functions (called through dynamic objects) for manipulating the DOM should go here.
         //------
-        private static readonly Dictionary<string, UIElement> _store;
+        private static readonly Dictionary<string, WeakReference<UIElement>> _store;
         private static readonly ReferenceIDGenerator _idGenerator = new ReferenceIDGenerator();
 
         static INTERNAL_HtmlDomManager()
         {
             if (!IsRunningInJavaScript())
             {
-                _store = new Dictionary<string, UIElement>(2048);
+                _store = new Dictionary<string, WeakReference<UIElement>>(2048);
             }
         }
 
@@ -76,6 +76,26 @@ namespace CSHTML5.Internal // IMPORTANT: if you change this namespace, make sure
             return INTERNAL_Simulator.HtmlDocument;
         }
 #endif
+
+        public static void Remove(UIElement uielement)
+        {
+            /*
+            Console.WriteLine("DELETING UI ELEMENT");
+            var val = _store.FirstOrDefault(p => {
+                p.Value.TryGetTarget(out var ui);
+                return ui == uielement;
+            });
+            Console.WriteLine("ELEMENT KEY - " + val.Key);
+            if (val.Key != null && _store.ContainsKey(val.Key))
+            {
+                Console.WriteLine("REMOVING");
+                //_store.Remove(val.Key);
+            }
+            else
+            {
+                Console.WriteLine("DOES NOT CONTAIN");
+            }*/
+        }
 
         public static object GetApplicationRootDomElement()
         {
@@ -926,8 +946,8 @@ function(){
             {
                 Interop.ExecuteJavaScriptAsync(@"document.createElementSafe($0, $1, $2, $3)", domElementTag, uniqueIdentifier, parentRef, index);
             }
-            
-            _store.Add(uniqueIdentifier, associatedUIElement);
+
+            _store.Add(uniqueIdentifier, new WeakReference<UIElement>(associatedUIElement));
 
             return new INTERNAL_HtmlDomElementReference(uniqueIdentifier, parent); //todo: when parent is null this breaks for the root control, but the whole logic will be replaced with simple "ExecuteJavaScript" calls in the future, so it will not be a problem.
         }
@@ -955,7 +975,7 @@ var parentElement = document.getElementByIdSafe(""{parentUniqueIdentifier}"");
     parentElement.children[{insertionIndex}].insertAdjacentElement(""{relativePosition}"", newElement);";
 
             ExecuteJavaScript(javaScriptToExecute);
-            _store.Add(uniqueIdentifier, associatedUIElement);
+            _store.Add(uniqueIdentifier, new WeakReference<UIElement>(associatedUIElement));
             return new INTERNAL_HtmlDomElementReference(uniqueIdentifier, (INTERNAL_HtmlDomElementReference)parentRef);
         }
 
@@ -989,7 +1009,7 @@ var parentElement = document.getElementByIdSafe(""{parentUniqueIdentifier}"");
 parentElement.appendChild(newElement);";
 
                 ExecuteJavaScript(javaScriptToExecute);
-                _store.Add(uniqueIdentifier, associatedUIElement);
+                _store.Add(uniqueIdentifier, new WeakReference<UIElement>(associatedUIElement));
                 return new INTERNAL_HtmlDomElementReference(uniqueIdentifier, ((INTERNAL_HtmlDomElementReference)parentRef).Parent);
                 //todo-perfs: check if there is a better solution in terms of performance (while still remaining compatible with all browsers).
 #if !CSHTML5NETSTANDARD
@@ -1009,7 +1029,7 @@ var parentElement = document.getElementByIdSafe(""{parentUniqueIdentifier}"");
 parentElement.appendChild(child);";
 
             ExecuteJavaScript(javaScriptToExecute);
-            if (_store.TryGetValue(parentUniqueIdentifier, out UIElement parent))
+            if (_store.TryGetValue(parentUniqueIdentifier, out var parent))
             {
                 _store[childUniqueIdentifier] = parent;
             }
@@ -1233,7 +1253,7 @@ parentElement.appendChild(child);";
 
             for (int i = elements.Length - 1; i >= 0; i--)
             {
-                if (_store.TryGetValue(elements[i], out UIElement uie))
+                if (_store.TryGetValue(elements[i], out var wruie) && wruie.TryGetTarget(out var uie))
                 {
                     yield return uie;
                 }
@@ -1264,7 +1284,7 @@ parentElement.appendChild(child);";
                     if (!IsNullOrUndefined(jsId))
                     {
                         string id = Convert.ToString(jsId);
-                        if (_store.TryGetValue(id, out UIElement uie))
+                        if (_store.TryGetValue(id, out var wruie) && wruie.TryGetTarget(out var uie))
                         {
                             result = uie;
                             break;

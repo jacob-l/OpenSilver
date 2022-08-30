@@ -30,7 +30,7 @@ namespace CSHTML5.Internal
 #endif
     internal class OnCallBackImpl
     {
-        private readonly SynchronyzedStore<Delegate> _store = new SynchronyzedStore<Delegate>();
+        private readonly SynchronyzedStore<WeakReference<Delegate>> _store = new SynchronyzedStore<WeakReference<Delegate>>();
 
         private OnCallBackImpl()
         {
@@ -38,7 +38,7 @@ namespace CSHTML5.Internal
 
         public static OnCallBackImpl Instance { get; } = new OnCallBackImpl();
 
-        public int RegisterCallBack(Delegate callback) => _store.Add(callback);
+        public int RegisterCallBack(Delegate callback) => _store.Add(new WeakReference<Delegate>(callback));
 
         public void OnCallbackFromJavaScriptError(string idWhereCallbackArgsAreStored)
         {
@@ -75,7 +75,11 @@ namespace CSHTML5.Internal
             //----------------------------------
             // Get the C# callback from its ID:
             //----------------------------------
-            Delegate callback = _store.Get(callbackId);
+            var callbackWeakReference = _store.Get(callbackId);
+            if (!callbackWeakReference.TryGetTarget(out var callback))
+            {
+                return null;
+            }
 
             Type callbackType = callback.GetType();
             Type[] callbackGenericArgs = null;
