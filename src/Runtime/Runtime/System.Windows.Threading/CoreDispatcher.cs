@@ -134,12 +134,14 @@ namespace Windows.UI.Core
                     return;
                 }
 
+                var linkToMethod = method;
                 CSHTML5.Interop.ExecuteJavaScriptAsync("setTimeout($0, 1)",
                     (Action)(() =>
                     {
                         try
                         {
-                            method();
+                            linkToMethod();
+                            linkToMethod = null;
                         }
                         catch (Exception e)
                         {

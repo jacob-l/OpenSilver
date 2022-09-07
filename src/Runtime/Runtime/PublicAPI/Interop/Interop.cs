@@ -30,6 +30,8 @@ namespace OpenSilver
     /// </summary>
     public static class Interop
     {
+        public static bool EnableLogForDelegates;
+
         /// <summary>
         /// Allows calling JavaScript code from within C#.
         /// </summary>
@@ -57,6 +59,11 @@ namespace OpenSilver
             return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: false, variables: variables);
         }
 
+        public static object ExecuteJavaScriptWeakRef(string javascript, params object[] variables)
+        {
+            return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: false, weakReference: true, variables: variables);
+        }
+
         /// <summary>
         /// Allows calling JavaScript code from within C#. The call will be asynchronous when run in the Simulator.
         /// </summary>
@@ -80,6 +87,11 @@ namespace OpenSilver
         public static object ExecuteJavaScriptAsync(string javascript, params object[] variables)
         {
             return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: true, variables: variables);
+        }
+
+        public static object ExecuteJavaScriptAsyncWeakRef(string javascript, params object[] variables)
+        {
+            return CSHTML5.INTERNAL_InteropImplementation.ExecuteJavaScript_SimulatorImplementation(javascript, runAsynchronously: true, weakReference: true, variables: variables);
         }
 
         /// <summary>

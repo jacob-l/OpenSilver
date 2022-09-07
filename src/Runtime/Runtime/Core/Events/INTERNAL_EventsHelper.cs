@@ -56,9 +56,9 @@ namespace CSHTML5.Internal
         {
 #if !BUILDINGDOCUMENTATION
             if (domElementRef is INTERNAL_HtmlDomElementReference)
-                Interop.ExecuteJavaScriptAsync(@"document.addEventListenerSafe($0, $1, $2)", ((INTERNAL_HtmlDomElementReference)domElementRef).UniqueIdentifier, eventName, newProxy.Handler);
+                OpenSilver.Interop.ExecuteJavaScriptAsyncWeakRef(@"document.addEventListenerSafe($0, $1, $2)", ((INTERNAL_HtmlDomElementReference)domElementRef).UniqueIdentifier, eventName, newProxy.Handler);
             else
-                Interop.ExecuteJavaScriptAsync(@"document.addEventListenerSafe($0, $1, $2)", domElementRef, eventName, newProxy.Handler);
+                OpenSilver.Interop.ExecuteJavaScriptAsyncWeakRef(@"document.addEventListenerSafe($0, $1, $2)", domElementRef, eventName, newProxy.Handler);
 
             /*
             DOMEventType eventType;

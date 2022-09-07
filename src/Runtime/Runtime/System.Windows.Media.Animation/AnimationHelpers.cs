@@ -60,7 +60,7 @@ $0.queue = $3;
             }
             else
             {
-                CSHTML5.Interop.ExecuteJavaScriptAsync(@"
+                OpenSilver.Interop.ExecuteJavaScriptAsyncWeakRef(@"
 $0.easing = $1;
 $0.duration = $2;
 $0.queue = false;
@@ -76,12 +76,12 @@ $0.complete = $4;
                 {
                     foreach (string key in additionalOptions.Keys)
                     {
-                        CSHTML5.Interop.ExecuteJavaScriptAsync(@"$0[$1] = $2;", options, key, additionalOptions[key]);
+                        OpenSilver.Interop.ExecuteJavaScriptAsync(@"$0[$1] = $2;", options, key, additionalOptions[key]);
                     }
                 }
             }
 
-            CSHTML5.Interop.ExecuteJavaScriptAsync(@"Velocity($0, $1, $2);
+            OpenSilver.Interop.ExecuteJavaScriptAsync(@"Velocity($0, $1, $2);
                                                      Velocity.Utilities.dequeue($0, $3);",
                                                      domElement, jsFromToValues, options, visualStateGroupName);
         }

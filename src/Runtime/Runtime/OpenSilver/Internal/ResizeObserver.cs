@@ -12,6 +12,7 @@
 \*====================================================================================*/
 
 using System;
+using CSHTML5.Internal;
 
 #if MIGRATION
 using System.Windows;
@@ -115,7 +116,7 @@ namespace OpenSilver.Internal
                 {
                     _isObserved = true;
 
-                    _resizeSensor = OpenSilver.Interop.ExecuteJavaScript(
+                    _resizeSensor = OpenSilver.Interop.ExecuteJavaScriptWeakRef(
                         "new ResizeSensor($0, $1)", 
                         elementReference, 
                         new Action<string>((string arg) => callback(ParseSize(arg)))
@@ -169,7 +170,7 @@ namespace OpenSilver.Internal
                 {
                     _isObserved = true;
 
-                    OpenSilver.Interop.ExecuteJavaScript(
+                    OpenSilver.Interop.ExecuteJavaScriptWeakRef(
                         "$0.observe($1, $2)",
                         _observerJsReference,
                         elementReference,

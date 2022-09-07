@@ -46,7 +46,20 @@ namespace Windows.UI.Xaml
 
         internal event EventHandler InheritedContextChanged;
 
-        internal DependencyObject InheritanceContext { get; private set; }
+        private WeakReference<DependencyObject> _inheritanceContext;
+        internal DependencyObject InheritanceContext
+        {
+            get
+            {
+                if (_inheritanceContext != null && _inheritanceContext.TryGetTarget(out var target))
+                {
+                    return target;
+                }
+
+                return null;
+            }
+            private set => _inheritanceContext = new WeakReference<DependencyObject>(value);
+        }
 
         internal bool CanBeInheritanceContext { get; set; }
 

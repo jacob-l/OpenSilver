@@ -54,7 +54,8 @@ namespace Windows.UI.Xaml.Media
         {
             get
             {
-                if(_propertiesWhereUsed == null)
+                return new HashSet<KeyValuePair<DependencyObject, DependencyProperty>>();
+                if (_propertiesWhereUsed == null)
                 {
                     _propertiesWhereUsed = new HashSet<KeyValuePair<DependencyObject, DependencyProperty>>();
                 }

@@ -30,15 +30,19 @@ namespace CSHTML5.Internal
 #endif
     internal class OnCallBackImpl
     {
-        private readonly SynchronyzedStore<WeakReference<Delegate>> _store = new SynchronyzedStore<WeakReference<Delegate>>();
+        private readonly SynchronyzedStore<Delegate> _store = new SynchronyzedStore<Delegate>();
+        private readonly SynchronyzedStore<WeakReference<Delegate>> _storeWeakReference = new SynchronyzedStore<WeakReference<Delegate>>();
 
         private OnCallBackImpl()
         {
+            _storeWeakReference.Add(new WeakReference<Delegate>((Action)(() => { })));
         }
 
         public static OnCallBackImpl Instance { get; } = new OnCallBackImpl();
 
-        public int RegisterCallBack(Delegate callback) => _store.Add(new WeakReference<Delegate>(callback));
+        public int RegisterCallBack(Delegate callback) => _store.Add(callback);
+
+        public int RegisterCallBackWeakReference(Delegate callback) => -_storeWeakReference.Add(new WeakReference<Delegate>(callback));
 
         public void OnCallbackFromJavaScriptError(string idWhereCallbackArgsAreStored)
         {
@@ -75,8 +79,18 @@ namespace CSHTML5.Internal
             //----------------------------------
             // Get the C# callback from its ID:
             //----------------------------------
-            var callbackWeakReference = _store.Get(callbackId);
-            if (!callbackWeakReference.TryGetTarget(out var callback))
+            Delegate callback = null;
+            if (callbackId >= 0)
+            {
+                callback = _store.Get(callbackId);
+            }
+            else
+            {
+                var wr = _storeWeakReference.Get(-callbackId);
+                wr.TryGetTarget(out callback);
+            }
+
+            if (callback == null)
             {
                 return null;
             }

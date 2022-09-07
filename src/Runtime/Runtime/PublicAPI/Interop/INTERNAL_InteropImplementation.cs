@@ -67,7 +67,7 @@ namespace CSHTML5
 #if BRIDGE
         [Bridge.Template("null")]
 #endif
-        internal static INTERNAL_JSObjectReference ExecuteJavaScript_SimulatorImplementation(string javascript, bool runAsynchronously, bool noImpactOnPendingJSCode = false, params object[] variables)
+        internal static INTERNAL_JSObjectReference ExecuteJavaScript_SimulatorImplementation(string javascript, bool runAsynchronously, bool noImpactOnPendingJSCode = false, bool weakReference = false, params object[] variables)
         {
             //---------------
             // Due to the fact that it is not possible to pass JavaScript objects between the simulator JavaScript context
@@ -135,10 +135,15 @@ namespace CSHTML5
                     // Delegates
                     //-----------
 
+                    if (!weakReference && OpenSilver.Interop.EnableLogForDelegates)
+                    {
+                        Console.WriteLine("DELEGATE WITHOUT WEAK REFERENCE " + Environment.StackTrace);
+                    }
+
                     Delegate callback = (Delegate)variable;
 
                     // Add the callback to the document:
-                    int callbackId = OnCallBackImpl.Instance.RegisterCallBack(callback);
+                    int callbackId = weakReference ? OnCallBackImpl.Instance.RegisterCallBackWeakReference(callback) : OnCallBackImpl.Instance.RegisterCallBack(callback);
 
                     var isVoid = callback.Method.ReturnType == typeof(void);
 

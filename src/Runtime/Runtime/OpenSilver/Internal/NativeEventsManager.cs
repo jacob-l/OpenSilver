@@ -23,8 +23,8 @@ namespace OpenSilver.Internal
 {
     internal class NativeEventsManager
     {
-        private readonly Delegate _handler;
-        private readonly UIElement _owner;
+        private Delegate _handler;
+        private UIElement _owner;
         private readonly bool _isFocusable;
 
         internal NativeEventsManager(UIElement uie, UIElement mouseEventTarget, UIElement keyboardEventTarget, bool isFocusable)
@@ -48,18 +48,23 @@ namespace OpenSilver.Internal
             }
         }
 
-        internal UIElement MouseTarget { get; }
+        internal UIElement MouseTarget { get; private set; }
 
-        internal UIElement KeyboardTarget { get; }
+        internal UIElement KeyboardTarget { get; private set; }
 
         public void AttachEvents()
         {
-            Interop.ExecuteJavaScriptAsync("document._attachEventListeners($0, $1, $2)", _owner.INTERNAL_OuterDomElement, _handler, _isFocusable);
+            Interop.ExecuteJavaScriptAsyncWeakRef("document._attachEventListeners($0, $1, $2)",
+                _owner.INTERNAL_OuterDomElement, _handler, _isFocusable);
         }
 
         public void DetachEvents()
         {
             Interop.ExecuteJavaScriptAsync("document._removeEventListeners($0)", _owner.INTERNAL_OuterDomElement);
+            MouseTarget = null;
+            KeyboardTarget = null;
+            _owner = null;
+            _handler = null;
         }
 
         private void NativeEventCallback(object jsEventArg)

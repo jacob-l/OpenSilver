@@ -86,7 +86,7 @@ namespace Windows.UI.Xaml.Controls
             // the focus will be redirected to the <input>, unless the click was on an element that
             // absorbs pointer events.
 
-            OpenSilver.Interop.ExecuteJavaScript(@"$0.addEventListener('click', $1)", this.INTERNAL_OuterDomElement, (Action<object>)TextBoxView_GotFocus);
+            OpenSilver.Interop.ExecuteJavaScriptWeakRef(@"$0.addEventListener('click', $1)", this.INTERNAL_OuterDomElement, (Action<object>)TextBoxView_GotFocus);
 
             UpdateDomText(Host.Text);
         }
