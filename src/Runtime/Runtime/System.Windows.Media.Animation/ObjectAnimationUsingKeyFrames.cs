@@ -110,6 +110,8 @@ namespace Windows.UI.Xaml.Media.Animation
 
         internal override void GetTargetInformation(IterationParameters parameters)
         {
+            //We need to handle this
+            return;
             _parameters = parameters;
             DependencyObject target;
             PropertyPath propertyPath;

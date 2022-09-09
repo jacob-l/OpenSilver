@@ -59,7 +59,7 @@ namespace Windows.UI.Xaml.Controls
             iFrameStyle.height = "100%";
             iFrameStyle.border = "none";
 
-            CSHTML5.Interop.ExecuteJavaScriptAsync("$0.onload = $1", _iFrame, (Action)OnIframeLoad);
+            OpenSilver.Interop.ExecuteJavaScriptAsyncWeakRef("$0.onload = $1", _iFrame, (Action)OnIframeLoad);
 
 #if MIGRATION
             var source = this.SourceUri;
