@@ -489,7 +489,7 @@ namespace CSHTML5.Internal
             }
 
             // Set new value inheritance context
-            if (effectiveValueKind == BaseValueSourceInternal.Local)
+            if (effectiveValueKind == BaseValueSourceInternal.Local && !(storage.Owner is FrameworkElement))
             {
                 // Check above
                 storage.Owner.ProvideSelfAsInheritanceContext(computedValue, null/*storage.Property*/);

@@ -19,10 +19,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 #if MIGRATION
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 #else
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Core;
 #endif
 
@@ -42,6 +44,19 @@ namespace Runtime.OpenSilver.Tests.Maintenance.MemoryLeak
         private void CreateRemoveWebBrowser(GarbageCollectorTracker c)
         {
             var tc = new WebBrowserWithTrackingComponent(c);
+            var mainWindow = Application.Current.MainWindow;
+            mainWindow.Content = tc;
+            mainWindow.Content = new Grid();
+        }
+
+        private void CreateRemoveControlWithForeground(GarbageCollectorTracker c)
+        {
+            var binding = new Binding("Background")
+            {
+                RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor)
+            };
+            var tc = new ControlWithTrackingComponent(c);
+            tc.SetBinding(Control.ForegroundProperty, binding);
             var mainWindow = Application.Current.MainWindow;
             mainWindow.Content = tc;
             mainWindow.Content = new Grid();
@@ -101,6 +116,15 @@ namespace Runtime.OpenSilver.Tests.Maintenance.MemoryLeak
         {
             var c = new GarbageCollectorTracker();
             CreateRemoveWebBrowser(c);
+            CollectGarbage();
+            Assert.IsTrue(c.IsCollected);
+        }
+
+        [TestMethod]
+        public void Control_With_Foreground_Must_Be_Collected()
+        {
+            var c = new GarbageCollectorTracker();
+            CreateRemoveControlWithForeground(c);
             CollectGarbage();
             Assert.IsTrue(c.IsCollected);
         }
