@@ -16,6 +16,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,7 +28,7 @@ using DotNetForHtml5.Compiler.OtherHelpersAndHandlers;
 
 namespace DotNetForHtml5.Compiler
 {
-    internal class ReflectionOnSeparateAppDomainHandler : IDisposable
+    public class ReflectionOnSeparateAppDomainHandler : IDisposable
     {
         //Note: we use a new AppDomain so that we can Unload all the assemblies that we have inspected when we have done.
 
@@ -41,6 +42,7 @@ namespace DotNetForHtml5.Compiler
 
         AppDomain _newAppDomain;
         IMarshalledObject _marshalledObject;
+        MonoCecilVersion2 _monoCecilVersion = new MonoCecilVersion2();
 
         public ReflectionOnSeparateAppDomainHandler(string typeForwardingAssemblyPath = null)
         {
@@ -75,6 +77,7 @@ namespace DotNetForHtml5.Compiler
         {
             // Unload everything:
             AppDomain.Unload(_newAppDomain);
+            _monoCecilVersion.Unload();
             GC.Collect(); // Collects all unused memory
             GC.WaitForPendingFinalizers(); // Waits until GC has finished its work
             GC.Collect();
@@ -82,7 +85,10 @@ namespace DotNetForHtml5.Compiler
 
         public string LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo, bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode, bool skipReadingAttributesFromAssemblies)
         {
-            return _marshalledObject.LoadAssembly(assemblyPath, loadReferencedAssembliesToo, isBridgeBasedVersion, isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies: skipReadingAttributesFromAssemblies);
+            //File.AppendAllText("C:/Temp/LoadAssemblies.txt", $"reflectionOnSeparateAppDomain.LoadAssembly(\"{assemblyPath.Replace("\\", "\\\\")}\", {loadReferencedAssembliesToo.ToString().ToLowerInvariant()}, {isBridgeBasedVersion.ToString().ToLowerInvariant()}, {isCoreAssembly.ToString().ToLowerInvariant()}, \"{nameOfAssembliesThatDoNotContainUserCode}\", {skipReadingAttributesFromAssemblies.ToString().ToLowerInvariant()});" + Environment.NewLine);
+            _monoCecilVersion.LoadAssembly(assemblyPath, loadReferencedAssembliesToo, isBridgeBasedVersion,
+                isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies);
+            return _marshalledObject.LoadAssembly(assemblyPath, loadReferencedAssembliesToo, isBridgeBasedVersion, isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies);
         }
 
         public void LoadAssemblyAndAllReferencedAssembliesRecursively(string assemblyPath, bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode, bool skipReadingAttributesFromAssemblies, out List<string> assemblySimpleNames)
@@ -92,6 +98,7 @@ namespace DotNetForHtml5.Compiler
 
         public void LoadAssemblyMscorlib(bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode)
         {
+            //File.AppendAllText("C:/Temp/LoadAssemblies.txt", $"reflectionOnSeparateAppDomain.LoadAssemblyMscorlib(\"{isBridgeBasedVersion.ToString().ToLowerInvariant()}, {isCoreAssembly.ToString().ToLowerInvariant()}, \"{nameOfAssembliesThatDoNotContainUserCode}\");" + Environment.NewLine);
             _marshalledObject.LoadAssemblyMscorlib(isBridgeBasedVersion, isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode);
         }
 
@@ -137,6 +144,7 @@ namespace DotNetForHtml5.Compiler
 
         public bool IsElementAMarkupExtension(string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
         {
+            return _monoCecilVersion.IsElementAMarkupExtension(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
             return _marshalledObject.IsElementAMarkupExtension(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
@@ -147,6 +155,7 @@ namespace DotNetForHtml5.Compiler
 
         public bool IsTypeAssignableFrom(string nameSpaceOfTypeToAssignFrom, string nameOfTypeToAssignFrom, string assemblyNameOfTypeToAssignFrom, string nameSpaceOfTypeToAssignTo, string nameOfTypeToAssignTo, string assemblyNameOfTypeToAssignTo, bool isAttached = false)
         {
+            return _monoCecilVersion.IsTypeAssignableFrom(nameSpaceOfTypeToAssignFrom, nameOfTypeToAssignFrom, assemblyNameOfTypeToAssignFrom, nameSpaceOfTypeToAssignTo, nameOfTypeToAssignTo, assemblyNameOfTypeToAssignTo, isAttached);
             return _marshalledObject.IsTypeAssignableFrom(nameSpaceOfTypeToAssignFrom, nameOfTypeToAssignFrom, assemblyNameOfTypeToAssignFrom, nameSpaceOfTypeToAssignTo, nameOfTypeToAssignTo, assemblyNameOfTypeToAssignTo, isAttached);
         }
 
@@ -172,6 +181,8 @@ namespace DotNetForHtml5.Compiler
 
         public string GetCSharpEquivalentOfXamlTypeAsString(string namespaceName, string localTypeName, string assemblyNameIfAny = null, bool ifTypeNotFoundTryGuessing = false)
         {
+            return _monoCecilVersion.GetCSharpEquivalentOfXamlTypeAsString(namespaceName, localTypeName,
+                    assemblyNameIfAny, ifTypeNotFoundTryGuessing);
             return _marshalledObject.GetCSharpEquivalentOfXamlTypeAsString(namespaceName, localTypeName, assemblyNameIfAny, ifTypeNotFoundTryGuessing);
         }
 
@@ -182,6 +193,7 @@ namespace DotNetForHtml5.Compiler
 
         public MemberTypes GetMemberType(string memberName, string namespaceName, string localTypeName, string assemblyNameIfAny = null)
         {
+            return _monoCecilVersion.GetMemberType(memberName, namespaceName, localTypeName, assemblyNameIfAny);
             return _marshalledObject.GetMemberType(memberName, namespaceName, localTypeName, assemblyNameIfAny);
         }
 
@@ -197,7 +209,8 @@ namespace DotNetForHtml5.Compiler
 
         public void GetMethodReturnValueTypeInfo(string methodName, string namespaceName, string localTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out string returnValueAssemblyName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null)
         {
-            _marshalledObject.GetMethodReturnValueTypeInfo(methodName, namespaceName, localTypeName, out returnValueNamespaceName, out returnValueLocalTypeName, out returnValueAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny);
+            _monoCecilVersion.GetMethodReturnValueTypeInfo(methodName, namespaceName, localTypeName, out returnValueNamespaceName, out returnValueLocalTypeName, out returnValueAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny);
+            //_marshalledObject.GetMethodReturnValueTypeInfo(methodName, namespaceName, localTypeName, out returnValueNamespaceName, out returnValueLocalTypeName, out returnValueAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny);
         }
 
         public void GetAttachedPropertyGetMethodInfo(string methodName, string namespaceName, string localTypeName, out string declaringTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null)
@@ -207,7 +220,8 @@ namespace DotNetForHtml5.Compiler
 
         public void GetPropertyOrFieldTypeInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string propertyNamespaceName, out string propertyLocalTypeName, out string propertyAssemblyName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
         {
-            _marshalledObject.GetPropertyOrFieldTypeInfo(propertyOrFieldName, namespaceName, localTypeName, out propertyNamespaceName, out propertyLocalTypeName, out propertyAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny, isAttached: isAttached);
+            _monoCecilVersion.GetPropertyOrFieldTypeInfo(propertyOrFieldName, namespaceName, localTypeName, out propertyNamespaceName, out propertyLocalTypeName, out propertyAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny, isAttached: isAttached);
+            //_marshalledObject.GetPropertyOrFieldTypeInfo(propertyOrFieldName, namespaceName, localTypeName, out propertyNamespaceName, out propertyLocalTypeName, out propertyAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny, isAttached: isAttached);
         }
 
         public void GetPropertyOrFieldInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string memberDeclaringTypeName, out string memberTypeNamespace, out string memberTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
@@ -217,6 +231,7 @@ namespace DotNetForHtml5.Compiler
 
         public string GetFieldName(string fieldNameIgnoreCase, string namespaceName, string localTypeName, string assemblyIfAny = null)
         {
+            return _monoCecilVersion.GetFieldName(fieldNameIgnoreCase, namespaceName, localTypeName, assemblyIfAny);
             return _marshalledObject.GetFieldName(fieldNameIgnoreCase, namespaceName, localTypeName, assemblyIfAny);
         }
 
@@ -277,6 +292,7 @@ namespace DotNetForHtml5.Compiler
 
         public bool IsAssignableFrom(string namespaceName, string typeName, string fromNamespaceName, string fromTypeName)
         {
+            return _monoCecilVersion.IsAssignableFrom(namespaceName, typeName, fromNamespaceName, fromTypeName);
             return _marshalledObject.IsAssignableFrom(namespaceName, typeName, fromNamespaceName, fromTypeName);
         }
 
@@ -287,6 +303,7 @@ namespace DotNetForHtml5.Compiler
 
         public string GetEventHandlerType(string eventName, string namespaceName, string typeName, string assemblyName)
         {
+            return _monoCecilVersion.GetEventHandlerType(eventName, namespaceName, typeName, assemblyName);
             return _marshalledObject.GetEventHandlerType(eventName, namespaceName, typeName, assemblyName);
         }
 
@@ -1052,8 +1069,17 @@ namespace DotNetForHtml5.Compiler
 
             public MemberTypes GetMemberType(string memberName, string namespaceName, string localTypeName, string assemblyNameIfAny = null)
             {
-                MemberInfo memberInfo = GetMemberInfo(memberName, namespaceName, localTypeName, assemblyNameIfAny);
-                return memberInfo.MemberType;
+                try
+                {
+                    MemberInfo memberInfo = GetMemberInfo(memberName, namespaceName, localTypeName, assemblyNameIfAny);
+                    return memberInfo.MemberType;
+                }
+                catch (Exception ex)
+                {
+                    Debugger.Launch();
+                    Console.WriteLine("Exception - " + ex.Message);
+                    throw;
+                }
             }
 
             public string FindCommaSeparatedTypesThatAreSerializable(string assemblySimpleName)
@@ -1167,14 +1193,23 @@ namespace DotNetForHtml5.Compiler
 
             public bool IsElementAMarkupExtension(string elementNameSpace, string elementLocalName, string assemblyNameIfAny)
             {
-                var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
+                try
+                {
+                    var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
 
-                Type markupExtensionGeneric = this.FindType("System.Xaml", "IMarkupExtension`1");
-                Type objectType = this.FindType("System", "Object");
-                Type markupExtensionOfObject = markupExtensionGeneric.MakeGenericType(objectType);
+                    Type markupExtensionGeneric = this.FindType("System.Xaml", "IMarkupExtension`1");
+                    Type objectType = this.FindType("System", "Object");
+                    Type markupExtensionOfObject = markupExtensionGeneric.MakeGenericType(objectType);
 
-                bool typeIsAMarkupExtension = (markupExtensionOfObject.IsAssignableFrom(elementType) && elementType != typeof(string));
-                return typeIsAMarkupExtension;
+                    bool typeIsAMarkupExtension = (markupExtensionOfObject.IsAssignableFrom(elementType) &&
+                                                   elementType != typeof(string));
+                    return typeIsAMarkupExtension;
+                }
+                catch (Exception ex)
+                {
+                    Debugger.Launch();
+                    throw;
+                }
             }
 
             public bool IsElementAnUIElement(string elementNameSpace, string elementLocalName, string assemblyNameIfAny)
@@ -1276,12 +1311,21 @@ namespace DotNetForHtml5.Compiler
 
             public void GetPropertyOrFieldTypeInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string propertyNamespaceName, out string propertyLocalTypeName, out string propertyAssemblyName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
             {
-                var type = GetPropertyOrFieldType(propertyOrFieldName, namespaceName, localTypeName, assemblyNameIfAny, isAttached: isAttached);
-                propertyNamespaceName = this.BuildPropertyPathRecursively(type);
-                propertyLocalTypeName = GetTypeNameIncludingGenericArguments(type, false);
-                propertyAssemblyName = type.Assembly.GetName().Name;
-                isTypeString = (type == typeof(string));
-                isTypeEnum = (type.IsEnum);
+                try
+                {
+                    var type = GetPropertyOrFieldType(propertyOrFieldName, namespaceName, localTypeName,
+                        assemblyNameIfAny, isAttached: isAttached);
+                    propertyNamespaceName = this.BuildPropertyPathRecursively(type);
+                    propertyLocalTypeName = GetTypeNameIncludingGenericArguments(type, false);
+                    propertyAssemblyName = type.Assembly.GetName().Name;
+                    isTypeString = (type == typeof(string));
+                    isTypeEnum = (type.IsEnum);
+                }
+                catch (Exception ex)
+                {
+                    Debugger.Launch();
+                    throw;
+                }
             }
 
             public void GetPropertyOrFieldInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string memberDeclaringTypeName, out string memberTypeNamespace, out string memberTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)

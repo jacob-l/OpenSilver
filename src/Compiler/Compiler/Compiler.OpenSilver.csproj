@@ -10,7 +10,7 @@
     <RootNamespace>DotNetForHtml5.Compiler</RootNamespace>
     <DefineConstants>$(DefineConstants);CSHTML5BLAZOR;TRACE;DEBUG</DefineConstants>
     <DefineConstants Condition="'$(Configuration)' == 'SL' ">$(DefineConstants);SILVERLIGHTCOMPATIBLEVERSION;MIGRATION</DefineConstants>
-    <Optimize>true</Optimize>
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.0.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +35,7 @@
     <Compile Include="2_ConvertingXamlToCSharp\IMetadata.cs" />
     <Compile Include="2_ConvertingXamlToCSharp\XamlReader.cs" />
     <Compile Include="EntryPoints\ValidateCompilerVersion.cs" />
+    <Compile Include="OtherHelpersAndHandlers\MonoCecilVersion2.cs" />
     <Compile Include="OtherHelpersAndHandlers\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="2_ConvertingXamlToCSharp\ConvertingStringToValue.cs" />
