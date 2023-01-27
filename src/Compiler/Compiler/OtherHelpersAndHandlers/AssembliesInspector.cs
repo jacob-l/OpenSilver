@@ -144,11 +144,6 @@ namespace DotNetForHtml5.Compiler
             return _marshalledObject.IsElementAMarkupExtension(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
-        //public bool IsElementAnUIElement(string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
-        //{
-        //    return _marshalledObject.IsElementAnUIElement(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
-        //}
-
         public bool IsTypeAssignableFrom(string nameSpaceOfTypeToAssignFrom, string nameOfTypeToAssignFrom, string assemblyNameOfTypeToAssignFrom, string nameSpaceOfTypeToAssignTo, string nameOfTypeToAssignTo, string assemblyNameOfTypeToAssignTo, bool isAttached = false)
         {
             return _monoCecilVersion.IsTypeAssignableFrom(nameSpaceOfTypeToAssignFrom, nameOfTypeToAssignFrom, assemblyNameOfTypeToAssignFrom, nameSpaceOfTypeToAssignTo, nameOfTypeToAssignTo, assemblyNameOfTypeToAssignTo, isAttached);
@@ -193,11 +188,6 @@ namespace DotNetForHtml5.Compiler
             return _marshalledObject.GetMemberType(memberName, namespaceName, localTypeName, assemblyNameIfAny);
         }
 
-        public string FindCommaSeparatedTypesThatAreSerializable(string assemblySimpleName)
-        {
-            return _marshalledObject.FindCommaSeparatedTypesThatAreSerializable(assemblySimpleName);
-        }
-
         public bool IsTypeAnEnum(string namespaceName, string localTypeName, string assemblyNameIfAny = null)
         {
             return _marshalledObject.IsTypeAnEnum(namespaceName, localTypeName, assemblyNameIfAny);
@@ -231,41 +221,6 @@ namespace DotNetForHtml5.Compiler
             return _marshalledObject.GetFieldName(fieldNameIgnoreCase, namespaceName, localTypeName, assemblyIfAny);
         }
 
-        public string GetFieldDeclaringTypeName(string fieldName, string namespaceName, string localTypeName, out string assemblyNameOfDeclaringType, string assemblyNameIfAny = null)
-        {
-            return _marshalledObject.GetFieldDeclaringTypeName(fieldName, namespaceName, localTypeName, out assemblyNameOfDeclaringType, assemblyNameIfAny);
-        }
-
-        public string GetPropertyDeclaringTypeName(string propertyName, string namespaceName, string localTypeName, out string assemblyNameOfDeclaringType, string assemblyNameIfAny = null)
-        {
-            return _marshalledObject.GetPropertyDeclaringTypeName(propertyName, namespaceName, localTypeName, out assemblyNameOfDeclaringType, assemblyNameIfAny);
-        }
-
-        public string GetCSharpXamlForHtml5CompilerVersionNumberOrNull(string assemblySimpleName)
-        {
-            return _marshalledObject.GetCSharpXamlForHtml5CompilerVersionNumberOrNull(assemblySimpleName);
-        }
-
-        public string GetCSharpXamlForHtml5CompilerVersionFriendlyNameOrNull(string assemblySimpleName)
-        {
-            return _marshalledObject.GetCSharpXamlForHtml5CompilerVersionFriendlyNameOrNull(assemblySimpleName);
-        }
-
-        public string GetCSharpXamlForHtml5MinimumRequiredCompilerVersionNumberOrNull(string assemblySimpleName)
-        {
-            return _marshalledObject.GetCSharpXamlForHtml5MinimumRequiredCompilerVersionNumberOrNull(assemblySimpleName);
-        }
-
-        public string GetCSharpXamlForHtml5MinimumRequiredCompilerVersionFriendlyNameOrNull(string assemblySimpleName)
-        {
-            return _marshalledObject.GetCSharpXamlForHtml5MinimumRequiredCompilerVersionFriendlyNameOrNull(assemblySimpleName);
-        }
-
-        public Dictionary<string, byte[]> GetManifestResources(string assemblySimpleName, Func<string, bool> filenamePredicate)
-        {
-            return _marshalledObject.GetManifestResources(assemblySimpleName, filenamePredicate);
-        }
-
         public Dictionary<string, byte[]> GetManifestResources(string assemblySimpleName, HashSet<string> supportedExtensionsLowerCase)
         {
             return _marshalledObject.GetManifestResources(assemblySimpleName, supportedExtensionsLowerCase);
@@ -274,16 +229,6 @@ namespace DotNetForHtml5.Compiler
         public Dictionary<string, byte[]> GetResources(string assemblySimpleName, HashSet<string> supportedExtensionsLowercase)
         {
             return _marshalledObject.GetResources(assemblySimpleName, supportedExtensionsLowercase);
-        }
-
-        public Type GetTypeInCoreAssemblies(string typeFullName)
-        {
-            return _marshalledObject.GetTypeInCoreAssemblies(typeFullName);
-        }
-
-        public bool TryGenerateCodeForInstantiatingAttributeValue(string xamlValue, out string generatedCSharpCode, string valueNamespaceName, string valueLocalTypeName, string valueAssemblyNameIfAny)
-        {
-            return _marshalledObject.TryGenerateCodeForInstantiatingAttributeValue(xamlValue, out generatedCSharpCode, valueNamespaceName, valueLocalTypeName, valueAssemblyNameIfAny);
         }
 
         public bool IsAssignableFrom(string namespaceName, string typeName, string fromNamespaceName, string fromTypeName)
