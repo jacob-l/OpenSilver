@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -509,7 +510,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         {
             var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
 
-            var markupExtensionGeneric = this.FindType("System.Xaml", "IMarkupExtension`1");
+            var markupExtensionGeneric = FindType("System.Xaml", "IMarkupExtension`1");
 
             var isAssignableFrom = markupExtensionGeneric.IsAssignableFrom(elementType);
             var typeIsAMarkupExtension = isAssignableFrom && elementType.FullName != "System.String";
@@ -553,6 +554,68 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             }
 
             return typeOfElementToAssignTo.IsAssignableFrom(typeOfElementToAssignFrom);
+        }
+
+        private bool IsElementACollection(string elementNameSpace, string elementLocalName, string assemblyNameIfAny)
+        {
+            var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
+            var iListType = FindType("System.Collections", "IList");
+            var typeIsACollection = iListType.IsAssignableFrom(elementType);
+
+            return typeIsACollection;
+        }
+
+        private bool IsElementADictionary(string elementNameSpace, string elementLocalName, string assemblyNameIfAny)
+        {
+            var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
+            var iDictionaryType = FindType("System.Collections", "IDictionary");
+            var typeIsADictionary = iDictionaryType.IsAssignableFrom(elementType);
+
+            return typeIsADictionary;
+        }
+
+        private static CustomAttribute GetCustomAttributeDeep(TypeDefinition type, string fullName)
+        {
+            while (type != null)
+            {
+                var customAttr = type.CustomAttributes.FirstOrDefault(ca =>
+                    ca.AttributeType.FullName == fullName);
+
+                if (customAttr != null)
+                {
+                    return customAttr;
+                }
+
+                type = type.BaseType?.Resolve();
+            }
+
+            return null;
+        }
+
+        public string GetContentPropertyName(string namespaceName, string localTypeName, string assemblyNameIfAny = null)
+        {
+            var type = FindType(namespaceName, localTypeName, assemblyNameIfAny);
+
+            // Get instance of the attribute:
+            var contentPropertyAttr = GetCustomAttributeDeep(type, "System.Windows.Markup.ContentPropertyAttribute");
+
+            if (contentPropertyAttr == null &&
+                !IsElementACollection(namespaceName, localTypeName, assemblyNameIfAny) &&
+                !IsElementADictionary(namespaceName, localTypeName, assemblyNameIfAny))
+            {
+                //if the element is a collection, it is possible to add the children directly to this element.
+                throw new XamlParseException("No default content property exists for element: " + localTypeName.ToString());
+            }
+
+            if (contentPropertyAttr == null)
+                return null;
+
+            var value = contentPropertyAttr.ConstructorArguments[0].Value.ToString();
+
+            if (string.IsNullOrEmpty(value))
+                throw new Exception("The ContentPropertyAttribute must have a non-empty Name.");
+
+            return value;
         }
 
         public void Dispose()

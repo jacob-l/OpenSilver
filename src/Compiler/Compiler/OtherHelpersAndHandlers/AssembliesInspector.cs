@@ -100,41 +100,49 @@ namespace DotNetForHtml5.Compiler
 
         public string GetContentPropertyName(string namespaceName, string localTypeName, string assemblyNameIfAny = null)
         {
+            return _monoCecilVersion.GetContentPropertyName(namespaceName, localTypeName, assemblyNameIfAny);
             return _marshalledObject.GetContentPropertyName(namespaceName, localTypeName, assemblyNameIfAny);
         }
 
         public bool IsPropertyAttached(string propertyName, string declaringTypeNamespaceName, string declaringTypeLocalName, string parentNamespaceName, string parentLocalTypeName, string declaringTypeAssemblyIfAny = null)
         {
+            throw new NotImplementedException($"IsPropertyAttached(\"{propertyName}\", \"{declaringTypeNamespaceName}\", \"{declaringTypeLocalName}\", \"{parentNamespaceName}\", \"{parentLocalTypeName}\", \"{declaringTypeAssemblyIfAny}\");");
             return _marshalledObject.IsPropertyAttached(propertyName, declaringTypeNamespaceName, declaringTypeLocalName, parentNamespaceName, parentLocalTypeName, declaringTypeAssemblyIfAny);
         }
 
         public bool IsPropertyOrFieldACollection(string propertyName, string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"IsPropertyOrFieldACollection(\"{propertyName}\", \"{parentNamespaceName}\", \"{parentLocalTypeName}\", \"{parentAssemblyNameIfAny}\");");
             return _marshalledObject.IsPropertyOrFieldACollection(propertyName, parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
         public bool IsPropertyOrFieldADictionary(string propertyName, string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"IsPropertyOrFieldADictionary(\"{propertyName}\", \"{parentNamespaceName}\", \"{parentLocalTypeName}\", \"{parentAssemblyNameIfAny}\");");
             return _marshalledObject.IsPropertyOrFieldADictionary(propertyName, parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
         public bool DoesMethodReturnACollection(string methodName, string typeNamespaceName, string localTypeName, string typeAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"DoesMethodReturnACollection(\"{methodName}\", \"{typeNamespaceName}\", \"{localTypeName}\", \"{typeAssemblyNameIfAny}\");");
             return _marshalledObject.DoesMethodReturnACollection(methodName, typeNamespaceName, localTypeName, typeAssemblyNameIfAny);
         }
 
         public bool DoesMethodReturnADictionary(string methodName, string typeNamespaceName, string localTypeName, string typeAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"DoesMethodReturnADictionary(\"{methodName}\", \"{typeNamespaceName}\", \"{localTypeName}\", \"{typeAssemblyNameIfAny}\");");
             return _marshalledObject.DoesMethodReturnADictionary(methodName, typeNamespaceName, localTypeName, typeAssemblyNameIfAny);
         }
 
         public bool IsElementACollection(string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"IsElementACollection(\"{parentNamespaceName}\", \"{parentLocalTypeName}\", \"{parentAssemblyNameIfAny}\");");
             return _marshalledObject.IsElementACollection(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
         public bool IsElementADictionary(string parentNamespaceName, string parentLocalTypeName, string parentAssemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"IsElementADictionary(\"{parentNamespaceName}\", \"{parentLocalTypeName}\", \"{parentAssemblyNameIfAny}\");");
             return _marshalledObject.IsElementADictionary(parentNamespaceName, parentLocalTypeName, parentAssemblyNameIfAny);
         }
 
@@ -152,21 +160,25 @@ namespace DotNetForHtml5.Compiler
 
         public string GetKeyNameOfProperty(string elementNameSpace, string elementLocalName, string assemblyNameIfAny, string propertyName)
         {
+            throw new NotImplementedException($"GetKeyNameOfProperty(\"{elementNameSpace}\", \"{elementLocalName}\", \"{assemblyNameIfAny}\", \"{propertyName}\");");
             return _marshalledObject.GetKeyNameOfProperty(elementNameSpace, elementLocalName, assemblyNameIfAny, propertyName);
         }
 
         public bool DoesTypeContainNameMemberOfTypeString(string namespaceName, string localTypeName, string assemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"DoesTypeContainNameMemberOfTypeString(\"{namespaceName}\",\"{localTypeName}\", \"{assemblyNameIfAny}\");");
             return _marshalledObject.DoesTypeContainNameMemberOfTypeString(namespaceName, localTypeName, assemblyNameIfAny);
         }
 
         public XName GetCSharpEquivalentOfXamlTypeAsXName(string namespaceName, string localTypeName, string assemblyNameIfAny = null, bool ifTypeNotFoundTryGuessing = false)
         {
+            throw new NotImplementedException($"GetCSharpEquivalentOfXamlTypeAsXName(\"{namespaceName}\",\"{localTypeName}\",\"{assemblyNameIfAny}\", {ifTypeNotFoundTryGuessing});");
             return _marshalledObject.GetCSharpEquivalentOfXamlTypeAsXName(namespaceName, localTypeName, assemblyNameIfAny, ifTypeNotFoundTryGuessing);
         }
 
         public Type GetCSharpEquivalentOfXamlType(string namespaceName, string localTypeName, string assemblyIfAny = null, bool ifTypeNotFoundTryGuessing = false)
         {
+            throw new NotImplementedException($"GetCSharpEquivalentOfXamlType(\"{namespaceName}\", \"{localTypeName}\", \"{assemblyIfAny}\", {ifTypeNotFoundTryGuessing});");
             return _marshalledObject.GetCSharpEquivalentOfXamlType(namespaceName, localTypeName, assemblyIfAny, ifTypeNotFoundTryGuessing);
         }
 
@@ -179,6 +191,7 @@ namespace DotNetForHtml5.Compiler
 
         public string GetAssemblyQualifiedNameOfXamlType(string namespaceName, string localTypeName, string assemblyName)
         {
+            throw new NotImplementedException($"GetAssemblyQualifiedNameOfXamlType(\"{namespaceName}\", \"{localTypeName}\", \"{assemblyName}\");");
             return _marshalledObject.GetAssemblyQualifiedNameOfXamlType(namespaceName, localTypeName, assemblyName);
         }
 
@@ -190,6 +203,7 @@ namespace DotNetForHtml5.Compiler
 
         public bool IsTypeAnEnum(string namespaceName, string localTypeName, string assemblyNameIfAny = null)
         {
+            throw new NotImplementedException($"IsTypeAnEnum(\"{namespaceName}\", \"{localTypeName}\", \"{assemblyNameIfAny}\");");
             return _marshalledObject.IsTypeAnEnum(namespaceName, localTypeName, assemblyNameIfAny);
         }
 
@@ -201,6 +215,8 @@ namespace DotNetForHtml5.Compiler
 
         public void GetAttachedPropertyGetMethodInfo(string methodName, string namespaceName, string localTypeName, out string declaringTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null)
         {
+            throw new NotImplementedException(
+                $"GetAttachedPropertyGetMethodInfo(\"{methodName}\", \"{namespaceName}\", \"{localTypeName}\");");
             _marshalledObject.GetAttachedPropertyGetMethodInfo(methodName, namespaceName, localTypeName, out declaringTypeName, out returnValueNamespaceName, out returnValueLocalTypeName, out isTypeString, out isTypeEnum, assemblyNameIfAny);
         }
 
@@ -212,6 +228,8 @@ namespace DotNetForHtml5.Compiler
 
         public void GetPropertyOrFieldInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string memberDeclaringTypeName, out string memberTypeNamespace, out string memberTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
         {
+            throw new NotImplementedException(
+                $"GetPropertyOrFieldInfo(\"{propertyOrFieldName}\", \"{namespaceName}\");");
             _marshalledObject.GetPropertyOrFieldInfo(propertyOrFieldName, namespaceName, localTypeName, out memberDeclaringTypeName, out memberTypeNamespace, out memberTypeName, out isTypeString, out isTypeEnum, assemblyNameIfAny, isAttached);
         }
 
@@ -226,11 +244,6 @@ namespace DotNetForHtml5.Compiler
             return _marshalledObject.GetManifestResources(assemblySimpleName, supportedExtensionsLowerCase);
         }
 
-        public Dictionary<string, byte[]> GetResources(string assemblySimpleName, HashSet<string> supportedExtensionsLowercase)
-        {
-            return _marshalledObject.GetResources(assemblySimpleName, supportedExtensionsLowercase);
-        }
-
         public bool IsAssignableFrom(string namespaceName, string typeName, string fromNamespaceName, string fromTypeName)
         {
             return _monoCecilVersion.IsAssignableFrom(namespaceName, typeName, fromNamespaceName, fromTypeName);
@@ -239,6 +252,7 @@ namespace DotNetForHtml5.Compiler
 
         public string GetField(string fieldName, string namespaceName, string typeName, string assemblyName)
         {
+            throw new NotImplementedException($"GetField(\"{fieldName}\", \"{namespaceName}\", \"{typeName}\", \"{assemblyName}\");");
             return _marshalledObject.GetField(fieldName, namespaceName, typeName, assemblyName);
         }
 
