@@ -23,7 +23,7 @@ namespace DotNetForHtml5.Compiler
 {
     internal static class ExtractingAndCopyingResources
     {
-        public static bool Start(string assemblyPath, string outputPathAbsolute, string outputResourcesPath, HashSet<string> simpleNameOfAssembliesToIgnore, HashSet<string> supportedExtensionsLowercase, ILogger logger, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain, bool isBridgeBasedVersion, string nameOfAssembliesThatDoNotContainUserCode, out List<string> resXFilesCopied)
+        public static bool Start(string assemblyPath, string outputPathAbsolute, string outputResourcesPath, HashSet<string> simpleNameOfAssembliesToIgnore, HashSet<string> supportedExtensionsLowercase, ILogger logger, AssembliesInspector reflectionOnSeparateAppDomain, bool isBridgeBasedVersion, string nameOfAssembliesThatDoNotContainUserCode, out List<string> resXFilesCopied)
         {
             resXFilesCopied = new List<string>();
             List<string> assemblySimpleNames;

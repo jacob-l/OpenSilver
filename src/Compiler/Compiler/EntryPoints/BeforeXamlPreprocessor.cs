@@ -101,8 +101,8 @@ namespace DotNetForHtml5.Compiler
                         throw new Exception(operationName + " failed because the SourceAssembly parameter was not specified during the second pass.");
 
                     // Create a new static instance of the "ReflectionOnSeparateAppDomainHandler":
-                    ReflectionOnSeparateAppDomainHandler.Current = new ReflectionOnSeparateAppDomainHandler(typeForwardingAssemblyPath);
-                    ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain = ReflectionOnSeparateAppDomainHandler.Current;
+                    AssembliesInspector.Current = new AssembliesInspector(typeForwardingAssemblyPath);
+                    AssembliesInspector reflectionOnSeparateAppDomain = AssembliesInspector.Current;
 
 #if BRIDGE
                     //todo: if we are compiling CSHTML5 itself (or CSHTML5.Stubs), we need to process the XAML files in CSHTML5,
@@ -163,9 +163,9 @@ namespace DotNetForHtml5.Compiler
             }
             catch (Exception ex)
             {
-                if (ReflectionOnSeparateAppDomainHandler.Current != null)
+                if (AssembliesInspector.Current != null)
                 {
-                    ReflectionOnSeparateAppDomainHandler.Current.Dispose();
+                    AssembliesInspector.Current.Dispose();
                 }
 
                 logger.WriteError(operationName + " failed: " + ex.ToString());

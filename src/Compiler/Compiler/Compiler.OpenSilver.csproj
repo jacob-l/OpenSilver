@@ -35,7 +35,9 @@
     <Compile Include="2_ConvertingXamlToCSharp\IMetadata.cs" />
     <Compile Include="2_ConvertingXamlToCSharp\XamlReader.cs" />
     <Compile Include="EntryPoints\ValidateCompilerVersion.cs" />
-    <Compile Include="OtherHelpersAndHandlers\MonoCecilVersion2.cs" />
+    <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\CustomAssemblyDefinitionResolver.cs" />
+    <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\MonoCecilAssembliesInspectorImpl.cs" />
+    <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\TypeDefinitionExtensions.cs" />
     <Compile Include="OtherHelpersAndHandlers\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="2_ConvertingXamlToCSharp\ConvertingStringToValue.cs" />
@@ -71,7 +73,7 @@
     <Compile Include="OtherHelpersAndHandlers\ExecutionTimeMeasuring.cs" />
     <Compile Include="OtherHelpersAndHandlers\TrialHelpers_SharedWithOtherProjects.cs" />
     <Compile Include="OtherHelpersAndHandlers\Constants.cs" />
-    <Compile Include="OtherHelpersAndHandlers\ReflectionOnSeparateAppDomainHandler.cs" />
+    <Compile Include="OtherHelpersAndHandlers\AssembliesInspector.cs" />
     <Compile Include="OtherHelpersAndHandlers\ValidityHelpers_SharedWithOtherProjects.cs" />
     <Compile Include="OtherHelpersAndHandlers\VersionInformation_SharedWithOtherProjects.cs" />
     <Compile Include="OtherHelpersAndHandlers\AssembliesLoadHelper.cs" />

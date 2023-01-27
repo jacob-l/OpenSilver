@@ -99,7 +99,7 @@ namespace DotNetForHtml5.Compiler
 
                     // Create a separate AppDomain so that the types loaded for reflection can be unloaded when done.
                     bool isSuccess = false;
-                    using (var reflectionOnSeparateAppDomain = new ReflectionOnSeparateAppDomainHandler(typeForwardingAssemblyPath))
+                    using (var reflectionOnSeparateAppDomain = new AssembliesInspector(typeForwardingAssemblyPath))
                     {
 #if BRIDGE || CSHTML5BLAZOR
                         // Load for the core assemblies first:

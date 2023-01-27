@@ -27,11 +27,11 @@ namespace DotNetForHtml5.Compiler
     {
         //todo: support strings that contain commas, like in: {Binding Value, ConverterParameter = 'One, two, three, four, five, six', Mode = OneWay}
 
-        internal static void InsertMarkupNodes(XDocument doc, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        internal static void InsertMarkupNodes(XDocument doc, AssembliesInspector reflectionOnSeparateAppDomain)
         {
             TraverseNextElement(doc.Root, doc.Root.GetDefaultNamespace(), reflectionOnSeparateAppDomain);
         }
-        static void TraverseNextElement(XElement currentElement, XNamespace lastDefaultNamespace, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        static void TraverseNextElement(XElement currentElement, XNamespace lastDefaultNamespace, AssembliesInspector reflectionOnSeparateAppDomain)
         {
             XNamespace currentDefaultNamespace = currentElement.GetDefaultNamespace();
             if (currentDefaultNamespace == XNamespace.None)
@@ -167,7 +167,7 @@ namespace DotNetForHtml5.Compiler
         /// <param name="attributeValue">a string containing the whole attribute's definition (for example: "{Binding Toto, Mode = TwoWay, Converter = {StaticResource Myconverter}}")</param>
         /// <param name="reflectionOnSeparateAppDomain"></param>
         /// <returns></returns>
-        private static XElement GenerateNodeForAttribute(XName nodeName, string attributeValue, XNamespace lastDefaultNamespace, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain, Func<string, XNamespace> getNamespaceOfPrefix)
+        private static XElement GenerateNodeForAttribute(XName nodeName, string attributeValue, XNamespace lastDefaultNamespace, AssembliesInspector reflectionOnSeparateAppDomain, Func<string, XNamespace> getNamespaceOfPrefix)
         {
             //we get rid of the part that defines the type of the attribute (in the example: we get rid of "{Binding ")
             //if (attributeValue.StartsWith("{"))

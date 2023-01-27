@@ -23,12 +23,12 @@ namespace DotNetForHtml5.Compiler
 {
     internal static class FixingPropertiesOrder
     {
-        public static void FixPropertiesOrder(XDocument doc, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        public static void FixPropertiesOrder(XDocument doc, AssembliesInspector reflectionOnSeparateAppDomain)
         {
             FixSelectorItemsSourceOrder(doc.Root, reflectionOnSeparateAppDomain);
         }
 
-        public static void FixSelectorItemsSourceOrder(XElement currentElement, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        public static void FixSelectorItemsSourceOrder(XElement currentElement, AssembliesInspector reflectionOnSeparateAppDomain)
         {
             // Check if the current element is an object (rather than a property):
             bool isElementAnObjectRatherThanAProperty = !currentElement.Name.LocalName.Contains(".");

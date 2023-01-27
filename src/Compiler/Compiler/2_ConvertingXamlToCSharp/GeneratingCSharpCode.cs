@@ -103,7 +103,7 @@ namespace DotNetForHtml5.Compiler
             string sourceFile,
             string fileNameWithPathRelativeToProjectRoot,
             string assemblyNameWithoutExtension,
-            ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain,
+            AssembliesInspector reflectionOnSeparateAppDomain,
             bool isFirstPass,
             bool isSLMigration,
             string codeToPutInTheInitializeComponentOfTheApplicationClass,
@@ -261,7 +261,7 @@ namespace {namespaceStringIfAny}
         }
 
         private static void GetClassInformationFromXaml(XDocument doc, 
-            ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain, 
+            AssembliesInspector reflectionOnSeparateAppDomain, 
             out string className, 
             out string namespaceStringIfAny, 
             out string baseType, 

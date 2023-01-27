@@ -66,7 +66,7 @@ namespace Compiler.ExperimentsRunner
             var fileNameWithPathRelativeToProjectRoot =
                 "Other\\MaterialDesign_Styles_Kit\\MaterialDesign_CommonResources.xaml";
             var assemblyNameWithoutExtension = "OpenSilver.Samples.Showcase";
-            var reflectionOnSeparateAppDomain = new ReflectionOnSeparateAppDomainHandler();
+            var reflectionOnSeparateAppDomain = new AssembliesInspector();
             var isSecondPass = true;
             var isSLMigration = true;
             var outputRootPath = "wwwroot\\";
@@ -138,7 +138,7 @@ outputResourcesPath: outputResourcesPath, logger: new Logger());
             Console.ReadKey();
         }
 
-        private static void LoadAssemblies(ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        private static void LoadAssemblies(AssembliesInspector reflectionOnSeparateAppDomain)
         {
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Users\\user\\.nuget\\packages\\opensilver\\1.2.0-preview-2023-01-17-113548-386ed8bc\\lib\\netstandard2.0\\OpenSilver.dll", false, true, false, "DotNetBrowser.Chromium", false);
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Users\\user\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\5.0.0\\lib\\netstandard2.1\\Microsoft.Bcl.AsyncInterfaces.dll", false, true, false, "DotNetBrowser.Chromium", false);

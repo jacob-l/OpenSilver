@@ -172,7 +172,7 @@ namespace DotNetForHtml5.Compiler
             private readonly string _sourceFile;
             private readonly string _fileNameWithPathRelativeToProjectRoot;
             private readonly string _assemblyNameWithoutExtension;
-            private readonly ReflectionOnSeparateAppDomainHandler _reflectionOnSeparateAppDomain;
+            private readonly AssembliesInspector _reflectionOnSeparateAppDomain;
             private readonly bool _isSLMigration;
             private readonly string _codeToPutInTheInitializeComponentOfTheApplicationClass;
             private readonly ILogger _logger;
@@ -181,7 +181,7 @@ namespace DotNetForHtml5.Compiler
                 string sourceFile,
                 string fileNameWithPathRelativeToProjectRoot,
                 string assemblyNameWithoutExtension,
-                ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain,
+                AssembliesInspector reflectionOnSeparateAppDomain,
                 bool isSLMigration,
                 string codeToPutInTheInitializeComponentOfTheApplicationClass,
                 ILogger logger)
@@ -1432,7 +1432,7 @@ else
             private static string GetDefaultValueOfTypeAsString(string namespaceName,
                 string localTypeName,
                 bool isSystemType,
-                ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain,
+                AssembliesInspector reflectionOnSeparateAppDomain,
                 string assemblyIfAny = null)
             {
                 if (isSystemType)

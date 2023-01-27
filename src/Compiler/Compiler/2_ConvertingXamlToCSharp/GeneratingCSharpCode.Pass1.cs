@@ -27,13 +27,13 @@ namespace DotNetForHtml5.Compiler
             private readonly IMetadata _metadata;
             private readonly string _fileNameWithPathRelativeToProjectRoot;
             private readonly string _assemblyNameWithoutExtension;
-            private readonly ReflectionOnSeparateAppDomainHandler _reflectionOnSeparateAppDomain;
+            private readonly AssembliesInspector _reflectionOnSeparateAppDomain;
             private readonly bool _isSLMigration;
 
             public GeneratorPass1(XDocument doc,
                 string assemblyNameWithoutExtension,
                 string fileNameWithPathRelativeToProjectRoot,
-                ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain,
+                AssembliesInspector reflectionOnSeparateAppDomain,
                 bool isSLMigration)
             {
                 _reader = new XamlReader(doc);

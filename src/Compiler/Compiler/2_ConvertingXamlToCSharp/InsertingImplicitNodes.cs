@@ -25,7 +25,7 @@ namespace DotNetForHtml5.Compiler
         // any property defined by the user.
         public const string InitializedFromStringAttribute = "__.InitializeFromString.__";
 
-        public static void InsertImplicitNodes(XDocument doc, ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+        public static void InsertImplicitNodes(XDocument doc, AssembliesInspector reflectionOnSeparateAppDomain)
         {
             var indexesMapper = new Stack<List<int>>();
             TraverseNextElement(doc.Root, 0, indexesMapper, reflectionOnSeparateAppDomain);
@@ -35,7 +35,7 @@ namespace DotNetForHtml5.Compiler
             XElement currentElement, 
             int currentElementIndex, 
             /*Stack<Dictionary<int, int>> indexesMapper*/ Stack<List<int>> indexesMapper, 
-            ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain)
+            AssembliesInspector reflectionOnSeparateAppDomain)
         {
             bool skipTraversalOfChildren = false;
 
