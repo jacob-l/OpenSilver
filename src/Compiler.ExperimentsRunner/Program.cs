@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -76,6 +77,26 @@ namespace Compiler.ExperimentsRunner
 
             LoadAssemblies(reflectionOnSeparateAppDomain);
 
+
+            //var res = reflectionOnSeparateAppDomain.IsElementADictionary("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "ResourceDictionary");
+            //reflectionOnSeparateAppDomain.GetPropertyOrFieldInfo("Value", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "DiscreteObjectKeyFrame", out var memberDeclaringTypeName,
+            //    out var memberTypeNamespace, out var memberTypeName, out var isTypeString, out var isTypeEnum);
+            //var res = reflectionOnSeparateAppDomain.GetKeyNameOfProperty("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Expander", null, "Style");
+            //var res = reflectionOnSeparateAppDomain.GetField("BorderThicknessProperty", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Border", "OpenSilver.Samples.Showcase");
+            //var res = reflectionOnSeparateAppDomain.DoesMethodReturnADictionary("GetVisualStateGroups", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateManager");
+            var res = reflectionOnSeparateAppDomain.DoesMethodReturnACollection("GetVisualStateGroups", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateManager");
+            //var res = reflectionOnSeparateAppDomain.DoesTypeContainNameMemberOfTypeString("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateGroup");
+            //var res = reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlTypeAsXName("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Button");
+            //var res = reflectionOnSeparateAppDomain.IsPropertyOrFieldADictionary("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
+            //var res = reflectionOnSeparateAppDomain.IsPropertyOrFieldACollection("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
+            //var res = reflectionOnSeparateAppDomain.IsPropertyAttached("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
+
+            //var res = reflectionOnSeparateAppDomain.IsTypeAnEnum("OpenSilver.Samples.Showcase", "PlanetStructure");
+            Console.WriteLine(res);
+            /*
+            var res = reflectionOnSeparateAppDomain.GetContentPropertyName("http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk", "Page", null); ;
+            Console.WriteLine(res);
+
             reflectionOnSeparateAppDomain.GetPropertyOrFieldTypeInfo(
                 "Width",
                 "http://schemas.microsoft.com/winfx/2006/xaml/presentation",
@@ -88,7 +109,7 @@ namespace Compiler.ExperimentsRunner
                 null);
             Console.WriteLine(valueAssemblyName);
             
-            /*
+            
             var res = reflectionOnSeparateAppDomain.IsTypeAssignableFrom("http://schemas.microsoft.com/expression/2010/interactions",
                 "ChangePropertyAction", null,
                 "http://schemas.microsoft.com/expression/2010/interactions", "PropertyChangedTrigger.Actions",

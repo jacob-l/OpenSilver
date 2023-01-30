@@ -5,7 +5,8 @@ using Mono.Cecil;
 
 namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector
 {
-    public static class TypeDefinitionExtensions
+    //Source: https://stackoverflow.com/questions/40018991/how-to-implement-isassignablefrom-with-mono-cecil
+    internal static class TypeDefinitionExtensions
     {
         /// <summary>
         /// Is childTypeDef a subclass of parentTypeDef. Does not test interface inheritance
@@ -14,11 +15,8 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         /// <param name="parentTypeDef"></param>
         /// <returns></returns>
         public static bool IsSubclassOf(this TypeDefinition childTypeDef, TypeDefinition parentTypeDef) =>
-            childTypeDef.MetadataToken
-            != parentTypeDef.MetadataToken
-            && childTypeDef
-                .EnumerateBaseClasses()
-                .Any(b => b.MetadataToken == parentTypeDef.MetadataToken);
+           childTypeDef.MetadataToken != parentTypeDef.MetadataToken
+           && childTypeDef.EnumerateBaseClasses().Any(b => Equals(b, parentTypeDef));
 
         /// <summary>
         /// Does childType inherit from parentInterface
@@ -29,7 +27,9 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         public static bool DoesAnySubTypeImplementInterface(this TypeDefinition childType, TypeDefinition parentInterfaceDef)
         {
             Debug.Assert(parentInterfaceDef.IsInterface);
-            return childType
+
+            return
+                childType
                 .EnumerateBaseClasses()
                 .Any(typeDefinition => typeDefinition.DoesSpecificTypeImplementInterface(parentInterfaceDef));
         }
@@ -44,9 +44,10 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         public static bool DoesSpecificTypeImplementInterface(this TypeDefinition childTypeDef, TypeDefinition parentInterfaceDef)
         {
             Debug.Assert(parentInterfaceDef.IsInterface);
+
             return childTypeDef
-                .Interfaces
-                .Any(ifaceDef => DoesSpecificInterfaceImplementInterface(ifaceDef.InterfaceType.Resolve(), parentInterfaceDef));
+               .Interfaces
+               .Any(ifaceDef => DoesSpecificInterfaceImplementInterface(ifaceDef.InterfaceType.Resolve(), parentInterfaceDef));
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         {
             Debug.Assert(iface1.IsInterface);
             Debug.Assert(iface0.IsInterface);
-            return iface0.MetadataToken == iface1.MetadataToken || iface0.DoesAnySubTypeImplementInterface(iface1);
+            return Equals(iface0, iface1) || iface0.DoesAnySubTypeImplementInterface(iface1);
         }
 
         /// <summary>
@@ -70,21 +71,28 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         /// <returns></returns>
         public static bool IsAssignableFrom(this TypeDefinition target, TypeDefinition source)
             => target == source
-               || Equals(target, source)
-               || source.IsSubclassOf(target)
-               || target.IsInterface && source.DoesAnySubTypeImplementInterface(target);
+              || Equals(target, source)
+              || source.IsSubclassOf(target)
+              || target.IsInterface && source.DoesAnySubTypeImplementInterface(target);
 
         /// <summary>
         /// Enumerate the current type, it's parent and all the way to the top type
         /// </summary>
-        /// <param name="klassType"></param>
+        /// <param name="classType"></param>
         /// <returns></returns>
-        public static IEnumerable<TypeDefinition> EnumerateBaseClasses(this TypeDefinition klassType)
+        public static IEnumerable<TypeDefinition> EnumerateBaseClasses(this TypeDefinition classType)
         {
-            for (var typeDefinition = klassType; typeDefinition != null; typeDefinition = typeDefinition.BaseType?.Resolve())
+            for (var typeDefinition = classType; typeDefinition != null; typeDefinition = typeDefinition.BaseType?.Resolve())
             {
                 yield return typeDefinition;
             }
+        }
+
+        public static bool Equals(TypeDefinition a, TypeDefinition b)
+        {
+            return
+                a.MetadataToken == b.MetadataToken
+                && a.FullName == b.FullName;
         }
     }
 }

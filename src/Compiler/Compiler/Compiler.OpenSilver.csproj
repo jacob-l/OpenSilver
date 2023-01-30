@@ -38,6 +38,7 @@
     <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\CustomAssemblyDefinitionResolver.cs" />
     <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\MonoCecilAssembliesInspectorImpl.cs" />
     <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\TypeDefinitionExtensions.cs" />
+    <Compile Include="OtherHelpersAndHandlers\MonoCecilAssembliesInspector\MemberReferenceExtensions.cs" />
     <Compile Include="OtherHelpersAndHandlers\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="2_ConvertingXamlToCSharp\ConvertingStringToValue.cs" />
