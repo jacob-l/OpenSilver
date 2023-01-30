@@ -77,7 +77,17 @@ namespace Compiler.ExperimentsRunner
 
             LoadAssemblies(reflectionOnSeparateAppDomain);
 
-
+            var resDict = reflectionOnSeparateAppDomain.GetManifestResources("OpenSilver.Samples.Showcase",
+                new HashSet<string>
+                {
+                    ".js", ".css", ".png", ".jpg", ".gif", ".ico", ".mp4", ".ogv", ".webm", ".3gp", ".mp3", ".ogg",
+                    ".txt", ".xml", ".ttf", ".woff", ".woff2", ".cur", ".config", ".clientconfig", ".htm", ".html",
+                    ".svg"
+                });
+            foreach(var kvp in resDict)
+            {
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}");
+            }
             //var res = reflectionOnSeparateAppDomain.IsElementADictionary("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "ResourceDictionary");
             //reflectionOnSeparateAppDomain.GetPropertyOrFieldInfo("Value", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "DiscreteObjectKeyFrame", out var memberDeclaringTypeName,
             //    out var memberTypeNamespace, out var memberTypeName, out var isTypeString, out var isTypeEnum);

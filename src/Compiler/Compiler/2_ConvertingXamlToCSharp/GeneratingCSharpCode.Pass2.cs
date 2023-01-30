@@ -363,7 +363,7 @@ namespace DotNetForHtml5.Compiler
                             // If the direct content is not specified, we use the type's
                             // default value (ex: <sys:String></sys:String>)
                             directContent = GetDefaultValueOfTypeAsString(
-                                namespaceName, localTypeName, isKnownSystemType, _reflectionOnSeparateAppDomain, assemblyNameIfAny
+                                namespaceName, localTypeName, _reflectionOnSeparateAppDomain, assemblyNameIfAny
                             );
                         }
 
@@ -1431,33 +1431,10 @@ else
 
             private static string GetDefaultValueOfTypeAsString(string namespaceName,
                 string localTypeName,
-                bool isSystemType,
                 AssembliesInspector reflectionOnSeparateAppDomain,
                 string assemblyIfAny = null)
             {
-                if (isSystemType)
-                {
-                    return SystemTypesHelper.GetDefaultValue(namespaceName, localTypeName, assemblyIfAny);
-                }
-                else
-                {
-                    Type type = reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlType(namespaceName, localTypeName, assemblyIfAny, true);
-                    if (type == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        if (type.IsValueType)
-                        {
-                            return Activator.CreateInstance(type).ToString();
-                        }
-                        else
-                        {
-                            return "";
-                        }
-                    }
-                }
+                return SystemTypesHelper.GetDefaultValue(namespaceName, localTypeName, assemblyIfAny);
             }
 
             private string GenerateCodeForInstantiatingAttributeValue(

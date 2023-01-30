@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -23,6 +25,8 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         private const string Name = "Name";
         private const string PropertySuffix = "Property";
 
+        private const string AssemblyNotInListOfLoadedAssemblies = "The specified assembly is not in the list of loaded assemblies.";
+
         private readonly Dictionary<string, Dictionary<string, HashSet<string>>>
             _assemblyNameToXmlNamespaceToClrNamespaces = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 
@@ -36,6 +40,19 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             foreach (var kvp in _loadedAssemblySimpleNameToAssembly) kvp.Value.Dispose();
 
             _loadedAssemblySimpleNameToAssembly.Clear();
+        }
+
+        private static string GetExtension(string str)
+        {
+            try
+            {
+                return Path.GetExtension(str);
+            }
+            catch
+            {
+                //It is possible that resource does not have an extension
+                return null;
+            }
         }
 
         private TypeDefinition FindType(string namespaceName, string localTypeName,
@@ -133,7 +150,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                 : Enumerable.Empty<string>();
         }
 
-        private void ReadXmlnsDefinitionAttributes(AssemblyDefinition assembly, bool isBridgeBasedVersion)
+        private void ReadXmlnsDefinitionAttributes(AssemblyDefinition assembly)
         {
             var assemblySimpleName = assembly.Name.Name;
 
@@ -377,19 +394,54 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             return null;
         }
 
-        public string LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo, bool isBridgeBasedVersion,
-            bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode,
-            bool skipReadingAttributesFromAssemblies)
+        public HashSet<string> LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo = false, bool isBridgeBasedVersion = false,
+            bool isCoreAssembly = false, string nameOfAssembliesThatDoNotContainUserCode = "",
+            bool skipReadingAttributesFromAssemblies = false)
         {
-            var assembly = AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
+            var loadedAssemblyNames = new HashSet<string>();
+            var queue = new Queue<AssemblyDefinition>();
+            queue.Enqueue(AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
             {
                 AssemblyResolver =
                     new CustomAssemblyDefinitionResolver(assemblyName =>
                         _loadedAssemblySimpleNameToAssembly[assemblyName])
-            });
-            _loadedAssemblySimpleNameToAssembly[assembly.Name.Name] = assembly;
-            ReadXmlnsDefinitionAttributes(assembly, true);
-            return assembly.Name.Name;
+            }));
+            while (queue.Any())
+            {
+                var assembly = queue.Dequeue();
+                _loadedAssemblySimpleNameToAssembly[assembly.Name.Name] = assembly;
+                loadedAssemblyNames.Add(assembly.Name.Name);
+                if (!skipReadingAttributesFromAssemblies)
+                {
+                    ReadXmlnsDefinitionAttributes(assembly);
+                }
+
+                if (!loadReferencedAssembliesToo)
+                {
+                    return loadedAssemblyNames;
+                }
+                var referencedAssemblies = assembly.MainModule.AssemblyReferences;
+
+                foreach (var referencedAssembly in referencedAssemblies)
+                {
+                    if (_loadedAssemblySimpleNameToAssembly.ContainsKey(referencedAssembly.Name))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var assemblyDefinition = assembly.MainModule.AssemblyResolver.Resolve(referencedAssembly);
+                        queue.Enqueue(assemblyDefinition);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debugger.Launch();
+                    }
+                }
+            }
+
+            return loadedAssemblyNames;
         }
 
         public string GetCSharpEquivalentOfXamlTypeAsString(string namespaceName, string localTypeName,
@@ -765,6 +817,28 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         {
             var elementType = FindType(elementNameSpace, elementLocalName, assemblyNameIfAny);
             return IsDictionary(elementType);
+        }
+
+        public Dictionary<string, byte[]> GetManifestResources(string assemblySimpleName, HashSet<string> supportedExtensionsLowerCase)
+        {
+            if (!_loadedAssemblySimpleNameToAssembly.ContainsKey(assemblySimpleName))
+                throw new Exception(AssemblyNotInListOfLoadedAssemblies);
+
+            var assembly = _loadedAssemblySimpleNameToAssembly[assemblySimpleName];
+
+            var manifestResourceNames = assembly.MainModule.Resources.Select(r => r.Name);
+            var resourceFiles = (from fn in manifestResourceNames where supportedExtensionsLowerCase.Contains(GetExtension(fn.ToLower())) select fn).ToArray();
+            var result = new Dictionary<string, byte[]>();
+
+            foreach (var resourceFile in resourceFiles)
+            {
+                var resource = assembly.MainModule.Resources.FirstOrDefault(r => r.Name == resourceFile);
+                if (resource == null)
+                    throw new FileNotFoundException("No manifest resource stream named " + resourceFile);
+
+                result[resourceFile] = ((EmbeddedResource)resource).GetResourceData();
+            }
+            return result;
         }
     }
 }

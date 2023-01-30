@@ -100,13 +100,6 @@ namespace DotNetForHtml5.Compiler
             return reflectionOnSeparateAppDomain.IsElementADictionary(elementNameSpace, elementLocalName, assemblyNameIfAny);
         }
 
-        internal static bool IsElementACollection(XElement element, AssembliesInspector reflectionOnSeparateAppDomain)
-        {
-            string elementLocalName, elementNameSpace, assemblyNameIfAny;
-            GetClrNamespaceAndLocalName(element.Name, out elementNameSpace, out elementLocalName, out assemblyNameIfAny);
-            return reflectionOnSeparateAppDomain.IsElementACollection(elementNameSpace, elementLocalName, assemblyNameIfAny);
-        }
-
 
         internal static bool IsElementAMarkupExtension(XElement element, AssembliesInspector reflectionOnSeparateAppDomain)
         {
