@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,8 +23,15 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         private const string GetPrefix = "Get";
         private const string Name = "Name";
         private const string PropertySuffix = "Property";
+        private const string Using = "using:";
+        private const string ClrNamespace = "clr-namespace:";
+        private const string StaticRes = "StaticResource";
+        private const string StaticResExtension = "StaticResourceExtension";
+        private const string SystemWindows = "System.Windows";
+        private const string DependencyObj = "DependencyObject";
 
         private const string AssemblyNotInListOfLoadedAssemblies = "The specified assembly is not in the list of loaded assemblies.";
+
 
         private readonly Dictionary<string, Dictionary<string, HashSet<string>>>
             _assemblyNameToXmlNamespaceToClrNamespaces = new Dictionary<string, Dictionary<string, HashSet<string>>>();
@@ -55,16 +61,26 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             }
         }
 
+        private AssemblyDefinition ReadAssembly(string assemblyPath)
+        {
+            return AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
+            {
+                AssemblyResolver =
+                    new CustomAssemblyDefinitionResolver(assemblyName =>
+                        _loadedAssemblySimpleNameToAssembly[assemblyName])
+            });
+        }
+
         private TypeDefinition FindType(string namespaceName, string localTypeName,
             string filterAssembliesAndRetainOnlyThoseThatHaveThisName = null,
             bool doNotRaiseExceptionIfNotFound = false)
         {
             // Fix the namespace:
-            if (namespaceName.StartsWith("using:", StringComparison.CurrentCultureIgnoreCase))
+            if (namespaceName.StartsWith(Using, StringComparison.CurrentCultureIgnoreCase))
             {
-                namespaceName = namespaceName.Substring("using:".Length);
+                namespaceName = namespaceName.Substring(Using.Length);
             }
-            else if (namespaceName.StartsWith("clr-namespace:", StringComparison.CurrentCultureIgnoreCase))
+            else if (namespaceName.StartsWith(ClrNamespace, StringComparison.CurrentCultureIgnoreCase))
             {
                 GettingInformationAboutXamlTypes.ParseClrNamespaceDeclaration(namespaceName, out var ns,
                     out var assemblyNameIfAny);
@@ -78,7 +94,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                 namespaceName = namespaceName.Substring(GlobalPrefix.Length);
 
             // Handle special cases:
-            if (localTypeName == "StaticResource") localTypeName = "StaticResourceExtension";
+            if (localTypeName == StaticRes) localTypeName = StaticResExtension;
 
             // Generate string representing the type:
             var fullTypeNameWithNamespaceInsideBraces = !string.IsNullOrEmpty(namespaceName)
@@ -394,18 +410,18 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             return null;
         }
 
+        private TypeDefinition GetDependencyObjectType()
+        {
+            return FindType(SystemWindows, DependencyObj, Constants.NAME_OF_CORE_ASSEMBLY_SLMIGRATION_USING_BLAZOR);
+        }
+
         public HashSet<string> LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo = false, bool isBridgeBasedVersion = false,
             bool isCoreAssembly = false, string nameOfAssembliesThatDoNotContainUserCode = "",
             bool skipReadingAttributesFromAssemblies = false)
         {
             var loadedAssemblyNames = new HashSet<string>();
             var queue = new Queue<AssemblyDefinition>();
-            queue.Enqueue(AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
-            {
-                AssemblyResolver =
-                    new CustomAssemblyDefinitionResolver(assemblyName =>
-                        _loadedAssemblySimpleNameToAssembly[assemblyName])
-            }));
+            queue.Enqueue(ReadAssembly(assemblyPath));
             while (queue.Any())
             {
                 var assembly = queue.Dequeue();
@@ -429,14 +445,11 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                         continue;
                     }
 
-                    try
+                    var assemblyFullPath = Path.Combine(Path.GetDirectoryName(assemblyPath) ?? "",
+                        referencedAssembly.Name + ".dll");
+                    if (File.Exists(assemblyFullPath))
                     {
-                        var assemblyDefinition = assembly.MainModule.AssemblyResolver.Resolve(referencedAssembly);
-                        queue.Enqueue(assemblyDefinition);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debugger.Launch();
+                        queue.Enqueue(ReadAssembly(assemblyFullPath));
                     }
                 }
             }
@@ -474,6 +487,23 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             throw new XamlParseException(
                 $"Type '{localTypeName}' not found in namespace '{namespaceName}'."
             );
+        }
+
+        public string GetAssemblyQualifiedNameOfXamlType(
+            string namespaceName,
+            string localTypeName,
+            string assemblyNameIfAny)
+        {
+            var type = FindType(namespaceName, localTypeName, assemblyNameIfAny);
+
+            if (type != null)
+            {
+                // Note: we do not use 'AssemblyQualifiedName' because we do not want
+                // to include the version of the assembly
+                return type.FullName + ", " + type.Module.Assembly.Name.Name;
+            }
+
+            return null;
         }
 
         public bool IsAssignableFrom(string namespaceName, string typeName, string fromNamespaceName,
@@ -728,7 +758,6 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                 true);
             if (memberInfo == null) return false;
 
-            //ToDo: IsSecurityCritical?
             if (memberInfo is FieldDefinition fd && fd.IsString() && fd.IsPublic && !fd.IsStatic) return true;
 
             if (memberInfo is PropertyDefinition pd && pd.IsString()) return true;
@@ -811,6 +840,31 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             memberTypeName = GetTypeNameIncludingGenericArguments(propertyOrFieldType, false);
             isTypeString = propertyOrFieldType.IsString();
             isTypeEnum = propertyOrFieldType.Resolve().IsEnum;
+        }
+
+        public void GetAttachedPropertyGetMethodInfo(string methodName, string namespaceName, string localTypeName, out string declaringTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null)
+        {
+            var dependencyObjectType = GetDependencyObjectType();
+
+            var elementType = FindType(namespaceName, localTypeName, assemblyNameIfAny);
+            var currentType = elementType;
+            while (currentType != null)
+            {
+                var method = currentType.Methods.FirstOrDefault(m =>
+                    m.Name == methodName && m.IsStatic && m.IsPublic && m.Parameters.Count == 1 &&
+                    dependencyObjectType.IsAssignableFrom(m.Parameters[0].ParameterType.Resolve()));
+                if (method != null)
+                {
+                    declaringTypeName = GetTypeNameIncludingGenericArguments(method.DeclaringType, true);
+                    returnValueNamespaceName = BuildPropertyPathRecursively(method.ReturnType);
+                    returnValueLocalTypeName = GetTypeNameIncludingGenericArguments(method.ReturnType, false);
+                    isTypeString = method.ReturnType.IsString();
+                    isTypeEnum = method.ReturnType.Resolve().IsEnum;
+                    return;
+                }
+                currentType = currentType.BaseType?.Resolve();
+            }
+            throw new XamlParseException("Method \"" + methodName + "\" not found in type \"" + elementType + "\".");
         }
 
         public bool IsElementADictionary(string elementNameSpace, string elementLocalName, string assemblyNameIfAny)

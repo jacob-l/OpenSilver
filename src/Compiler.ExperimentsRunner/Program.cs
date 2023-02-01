@@ -62,6 +62,18 @@ namespace Compiler.ExperimentsRunner
 
         static void Main(string[] args)
         {
+            /*
+            ResourcesExtractorAndCopier.Execute(
+                "C:\\Users\\user\\Documents\\GitHub\\OpenSilver.Samples.Showcase\\src\\bin\\SL.Release\\net7.0\\OpenSilver.Samples.Showcase.dll",
+                "wwwroot\\", "resources\\", "mscorlib|System.Core|Microsoft.CSharp|JSIL.Meta|Bridge",
+                ".js|.css|.png|.jpg|.gif|.ico|.mp4|.ogv|.webm|.3gp|.mp3|.ogg|.txt|.xml|.ttf|.woff|.woff2|.cur|.config|.ClientConfig|.htm|.html|.svg",
+                new Logger(), true,
+                "C:\\Users\\user\\.nuget\\packages\\opensilver\\1.2.0-preview-2023-01-17-113548-386ed8bc\\build\\..\\tools\\CSharpXamlForHtml5.Bridge.TypeForwarding.dll",
+                "DotNetBrowser.Chromium",
+                "C:\\Users\\user\\.nuget\\packages\\opensilver\\1.2.0-preview-2023-01-17-113548-386ed8bc\\build\\..\\lib\\netstandard2.0\\OpenSilver.dll",
+                out var list);
+            */
+            
             var sourceFile =
                 "C:\\Users\\user\\Documents\\GitHub\\OpenSilver.Samples.Showcase\\src\\Other\\MaterialDesign_Styles_Kit\\MaterialDesign_CommonResources.xaml";
             var fileNameWithPathRelativeToProjectRoot =
@@ -77,6 +89,7 @@ namespace Compiler.ExperimentsRunner
 
             LoadAssemblies(reflectionOnSeparateAppDomain);
 
+            /*
             var resDict = reflectionOnSeparateAppDomain.GetManifestResources("OpenSilver.Samples.Showcase",
                 new HashSet<string>
                 {
@@ -88,13 +101,18 @@ namespace Compiler.ExperimentsRunner
             {
                 Console.WriteLine($"{kvp.Key} - {kvp.Value}");
             }
+            */
+            reflectionOnSeparateAppDomain.GetAttachedPropertyGetMethodInfo("GetPlacementTarget", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "ToolTipService",
+                out string declaringTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out bool isTypeString, out bool isTypeEnum, null);
+            //var res = reflectionOnSeparateAppDomain.GetAssemblyQualifiedNameOfXamlType("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Validation", null);
+            //Console.WriteLine(res);
             //var res = reflectionOnSeparateAppDomain.IsElementADictionary("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "ResourceDictionary");
             //reflectionOnSeparateAppDomain.GetPropertyOrFieldInfo("Value", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "DiscreteObjectKeyFrame", out var memberDeclaringTypeName,
             //    out var memberTypeNamespace, out var memberTypeName, out var isTypeString, out var isTypeEnum);
             //var res = reflectionOnSeparateAppDomain.GetKeyNameOfProperty("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Expander", null, "Style");
             //var res = reflectionOnSeparateAppDomain.GetField("BorderThicknessProperty", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Border", "OpenSilver.Samples.Showcase");
             //var res = reflectionOnSeparateAppDomain.DoesMethodReturnADictionary("GetVisualStateGroups", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateManager");
-            var res = reflectionOnSeparateAppDomain.DoesMethodReturnACollection("GetVisualStateGroups", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateManager");
+            //var res = reflectionOnSeparateAppDomain.DoesMethodReturnACollection("GetVisualStateGroups", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateManager");
             //var res = reflectionOnSeparateAppDomain.DoesTypeContainNameMemberOfTypeString("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "VisualStateGroup");
             //var res = reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlTypeAsXName("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Button");
             //var res = reflectionOnSeparateAppDomain.IsPropertyOrFieldADictionary("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
@@ -102,7 +120,7 @@ namespace Compiler.ExperimentsRunner
             //var res = reflectionOnSeparateAppDomain.IsPropertyAttached("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
 
             //var res = reflectionOnSeparateAppDomain.IsTypeAnEnum("OpenSilver.Samples.Showcase", "PlanetStructure");
-            Console.WriteLine(res);
+            //Console.WriteLine(res);
             /*
             var res = reflectionOnSeparateAppDomain.GetContentPropertyName("http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk", "Page", null); ;
             Console.WriteLine(res);

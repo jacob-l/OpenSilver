@@ -81,10 +81,10 @@ namespace DotNetForHtml5.Compiler
             GC.Collect();
         }
 
-        public string LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo, bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode, bool skipReadingAttributesFromAssemblies)
+        public void LoadAssembly(string assemblyPath, bool loadReferencedAssembliesToo, bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode, bool skipReadingAttributesFromAssemblies)
         {
-            return _monoCecilVersion.LoadAssembly(assemblyPath, loadReferencedAssembliesToo, isBridgeBasedVersion,
-                isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies).Single();
+            _monoCecilVersion.LoadAssembly(assemblyPath, loadReferencedAssembliesToo, isBridgeBasedVersion,
+                isCoreAssembly, nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies);
         }
 
         public void LoadAssemblyAndAllReferencedAssembliesRecursively(string assemblyPath, bool isBridgeBasedVersion, bool isCoreAssembly, string nameOfAssembliesThatDoNotContainUserCode, bool skipReadingAttributesFromAssemblies, out List<string> assemblySimpleNames)
@@ -165,7 +165,7 @@ namespace DotNetForHtml5.Compiler
 
         public string GetAssemblyQualifiedNameOfXamlType(string namespaceName, string localTypeName, string assemblyName)
         {
-            throw new NotImplementedException($"GetAssemblyQualifiedNameOfXamlType(\"{namespaceName}\", \"{localTypeName}\", \"{assemblyName}\");");
+            return _monoCecilVersion.GetAssemblyQualifiedNameOfXamlType(namespaceName, localTypeName, assemblyName);
             return _marshalledObject.GetAssemblyQualifiedNameOfXamlType(namespaceName, localTypeName, assemblyName);
         }
 
@@ -186,8 +186,9 @@ namespace DotNetForHtml5.Compiler
 
         public void GetAttachedPropertyGetMethodInfo(string methodName, string namespaceName, string localTypeName, out string declaringTypeName, out string returnValueNamespaceName, out string returnValueLocalTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null)
         {
-            throw new NotImplementedException(
-                $"GetAttachedPropertyGetMethodInfo(\"{methodName}\", \"{namespaceName}\", \"{localTypeName}\");");
+            _monoCecilVersion.GetAttachedPropertyGetMethodInfo(methodName, namespaceName, localTypeName,
+                out declaringTypeName, out returnValueNamespaceName, out returnValueLocalTypeName, out isTypeString,
+                out isTypeEnum, assemblyNameIfAny);
         }
 
         public void GetPropertyOrFieldTypeInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string propertyNamespaceName, out string propertyLocalTypeName, out string propertyAssemblyName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
