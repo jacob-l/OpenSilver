@@ -1,66 +1,92 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿
+/*===================================================================================
+*
+*   Copyright (c) Userware/OpenSilver.net
+*
+*   This file is part of the OpenSilver Runtime (https://opensilver.net), which is
+*   licensed under the MIT license: https://opensource.org/licenses/MIT
+*
+*   As stated in the MIT license, "the above copyright notice and this permission
+*   notice shall be included in all copies or substantial portions of the Software."
+*
+\*====================================================================================*/
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 
 namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector
 {
-    //Source: https://stackoverflow.com/questions/40018991/how-to-implement-isassignablefrom-with-mono-cecil
     internal static class TypeDefinitionExtensions
     {
         /// <summary>
-        /// Is childTypeDef a subclass of parentTypeDef. Does not test interface inheritance
-        /// </summary>
-        /// <param name="childTypeDef"></param>
-        /// <param name="parentTypeDef"></param>
-        /// <returns></returns>
-        public static bool IsSubclassOf(this TypeDefinition childTypeDef, TypeDefinition parentTypeDef) =>
-           childTypeDef.MetadataToken != parentTypeDef.MetadataToken
-           && childTypeDef.EnumerateBaseClasses().Any(b => Equals(b, parentTypeDef));
-
-        /// <summary>
-        /// Does childType inherit from parentInterface
+        /// Returns true if childType is a subclass of parentType.
+        /// Does not test interface inheritance.
         /// </summary>
         /// <param name="childType"></param>
-        /// <param name="parentInterfaceDef"></param>
+        /// <param name="parentType"></param>
         /// <returns></returns>
-        public static bool DoesAnySubTypeImplementInterface(this TypeDefinition childType, TypeDefinition parentInterfaceDef)
+        public static bool IsSubclassOf(this TypeDefinition childType, TypeDefinition parentType) =>
+           childType.MetadataToken != parentType.MetadataToken
+           && childType.EnumerateBaseClasses().Any(b => Equals(b, parentType));
+
+        /// <summary>
+        /// Returns true if childType directly or indirectly implements parentInterface.
+        /// </summary>
+        /// <param name="childType"></param>
+        /// <param name="parentInterface"></param>
+        /// <returns></returns>
+        public static bool DoesAnySubTypeImplementInterface(this TypeDefinition childType, TypeDefinition parentInterface)
         {
-            Debug.Assert(parentInterfaceDef.IsInterface);
+            if (!parentInterface.IsInterface)
+            {
+                throw new ArgumentException("Parent type must be an interface", nameof(parentInterface));
+            }
 
             return
                 childType
                 .EnumerateBaseClasses()
-                .Any(typeDefinition => typeDefinition.DoesSpecificTypeImplementInterface(parentInterfaceDef));
+                .Any(typeDefinition => typeDefinition.DoesSpecificTypeImplementInterface(parentInterface));
         }
 
         /// <summary>
-        /// Does the childType directly inherit from parentInterface. Base
-        /// classes of childType are not tested
+        /// Returns true if childType directly implements parentInterface.
+        /// Does not test parent classes of childType.
         /// </summary>
-        /// <param name="childTypeDef"></param>
-        /// <param name="parentInterfaceDef"></param>
+        /// <param name="childType"></param>
+        /// <param name="parentInterface"></param>
         /// <returns></returns>
-        public static bool DoesSpecificTypeImplementInterface(this TypeDefinition childTypeDef, TypeDefinition parentInterfaceDef)
+        public static bool DoesSpecificTypeImplementInterface(this TypeDefinition childType, TypeDefinition parentInterface)
         {
-            Debug.Assert(parentInterfaceDef.IsInterface);
+            if (!parentInterface.IsInterface)
+            {
+                throw new ArgumentException("Parent type must be an interface", nameof(parentInterface));
+            }
 
-            return childTypeDef
+            return childType
                .Interfaces
-               .Any(ifaceDef => DoesSpecificInterfaceImplementInterface(ifaceDef.InterfaceType.Resolve(), parentInterfaceDef));
+               .Any(impl => DoesSpecificInterfaceImplementInterface(impl.InterfaceType.Resolve(), parentInterface));
         }
 
         /// <summary>
-        /// Does interface iface0 equal or implement interface iface1
+        /// Returns true if child is equal to or implements parent.
+        /// Both child and parent must be interfaces.
         /// </summary>
-        /// <param name="iface0"></param>
-        /// <param name="iface1"></param>
+        /// <param name="childInterface"></param>
+        /// <param name="parentInterface"></param>
         /// <returns></returns>
-        public static bool DoesSpecificInterfaceImplementInterface(TypeDefinition iface0, TypeDefinition iface1)
+        public static bool DoesSpecificInterfaceImplementInterface(TypeDefinition childInterface, TypeDefinition parentInterface)
         {
-            Debug.Assert(iface1.IsInterface);
-            Debug.Assert(iface0.IsInterface);
-            return Equals(iface0, iface1) || iface0.DoesAnySubTypeImplementInterface(iface1);
+            if (!childInterface.IsInterface)
+            {
+                throw new ArgumentException("Child type must be an interface", nameof(parentInterface));
+            }
+            if (!parentInterface.IsInterface)
+            {
+                throw new ArgumentException("Parent type must be an interface", nameof(parentInterface));
+            }
+            return Equals(childInterface, parentInterface) || childInterface.DoesAnySubTypeImplementInterface(parentInterface);
         }
 
         /// <summary>

@@ -101,7 +101,7 @@ namespace DotNetForHtml5.Compiler
                         throw new Exception(operationName + " failed because the SourceAssembly parameter was not specified during the second pass.");
 
                     // Create a new static instance of the "ReflectionOnSeparateAppDomainHandler":
-                    AssembliesInspector.Current = new AssembliesInspector(typeForwardingAssemblyPath);
+                    AssembliesInspector.Current = new AssembliesInspector();
                     AssembliesInspector reflectionOnSeparateAppDomain = AssembliesInspector.Current;
 
 #if BRIDGE
@@ -143,9 +143,6 @@ namespace DotNetForHtml5.Compiler
                     {
                         reflectionOnSeparateAppDomain.LoadAssembly(referencedAssembly, loadReferencedAssembliesToo: false, isBridgeBasedVersion: isBridgeBasedVersion, isCoreAssembly: false, nameOfAssembliesThatDoNotContainUserCode: nameOfAssembliesThatDoNotContainUserCode, skipReadingAttributesFromAssemblies: false);
                     }
-
-                    // Load "mscorlib.dll" too (this is useful for resolving Mscorlib types in XAML, such as <system:String x:Key="TestString" xmlns:system="clr-namespace:System;assembly=mscorlib">Test</system:String>)
-                    reflectionOnSeparateAppDomain.LoadAssemblyMscorlib(isBridgeBasedVersion: isBridgeBasedVersion, isCoreAssembly: false, nameOfAssembliesThatDoNotContainUserCode: nameOfAssembliesThatDoNotContainUserCode);
 
                     // Load for reflection the source assembly itself and the referenced assemblies if second path:
                     if (isSecondPass && !isProcessingCSHTML5Itself)
