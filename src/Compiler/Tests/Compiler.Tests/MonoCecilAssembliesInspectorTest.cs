@@ -55,7 +55,41 @@ namespace Compiler.Tests
                 {
                     ".js", ".css", ".png", ".jpg", ".gif"
                 });
-            Assert.IsTrue(res.ContainsKey("Experimental.file.js"));
+            res.ContainsKey("Experimental.file.js").Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void GetAttachedPropertyGetMethodInfo_Should_Find_AttachedPropertyGetMethod()
+        {
+            MonoCecilVersion.GetAttachedPropertyGetMethodInfo("GetPlacementTarget", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "ToolTipService",
+                out var declaringTypeName, out var returnValueNamespaceName, out var returnValueLocalTypeName, out var isTypeString, out var isTypeEnum);
+
+            declaringTypeName.Should().Be("global::System.Windows.Controls.ToolTipService");
+            returnValueNamespaceName.Should().Be("System.Windows");
+            returnValueLocalTypeName.Should().Be("UIElement");
+            isTypeString.Should().BeFalse();
+            isTypeEnum.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void IsTypeAnEnum_Should_Return_True_For_Enum()
+        {
+            var res = MonoCecilVersion.IsTypeAnEnum(ExperimentalSubjectName, "PlanetStructure");
+            res.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void GetPropertyOrFieldTypeInfo_Should_Handle_Generic_Parameters()
+        {
+            MonoCecilVersion.GetPropertyOrFieldTypeInfo("MyProperty", "Experimental", "TypeWithGenericParameter",
+                out var propertyNamespaceName, out var propertyLocalTypeName, out var propertyAssemblyName,
+                out var isTypeString,
+                out var isTypeEnum);
+            propertyNamespaceName.Should().Be("System");
+            propertyLocalTypeName.Should().Be("String");
+            propertyAssemblyName.Should().Be("mscorlib");
+            isTypeString.Should().BeTrue();
+            isTypeEnum.Should().BeFalse();
         }
     }
 }

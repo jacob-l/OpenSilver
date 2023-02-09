@@ -153,7 +153,9 @@ namespace DotNetForHtml5.Compiler
 
         public void GetPropertyOrFieldTypeInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string propertyNamespaceName, out string propertyLocalTypeName, out string propertyAssemblyName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)
         {
-            _monoCecilVersion.GetPropertyOrFieldTypeInfo(propertyOrFieldName, namespaceName, localTypeName, out propertyNamespaceName, out propertyLocalTypeName, out propertyAssemblyName, out isTypeString, out isTypeEnum, assemblyNameIfAny, isAttached: isAttached);
+            _monoCecilVersion.GetPropertyOrFieldTypeInfo(propertyOrFieldName, namespaceName, localTypeName,
+                out propertyNamespaceName, out propertyLocalTypeName, out propertyAssemblyName, out isTypeString,
+                out isTypeEnum, assemblyNameIfAny, isAttached: isAttached);
         }
 
         public void GetPropertyOrFieldInfo(string propertyOrFieldName, string namespaceName, string localTypeName, out string memberDeclaringTypeName, out string memberTypeNamespace, out string memberTypeName, out bool isTypeString, out bool isTypeEnum, string assemblyNameIfAny = null, bool isAttached = false)

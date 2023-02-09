@@ -301,6 +301,10 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             }
 
             var propertyType = propertyInfo.PropertyType;
+            if (propertyType.IsGenericParameter)
+            {
+                return propertyType.ResolveGenericParameter(elementType.BaseType);
+            }
             return propertyType;
         }
 

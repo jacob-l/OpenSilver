@@ -8,6 +8,8 @@
   </PropertyGroup>
 
     <ItemGroup>
+    <Compile Include="GenericType.cs" />
+    <Compile Include="PlanetStructure.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper.cs" />
   </ItemGroup>
