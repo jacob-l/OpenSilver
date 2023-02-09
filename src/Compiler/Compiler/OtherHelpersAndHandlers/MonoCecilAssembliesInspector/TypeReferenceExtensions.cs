@@ -12,6 +12,7 @@
 \*====================================================================================*/
 
 using Mono.Cecil;
+using System;
 
 namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector
 {
@@ -19,22 +20,27 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
     {
         public static TypeReference ResolveGenericParameter(this TypeReference typeRef, TypeReference elementType)
         {
-            while (elementType != null && !(elementType is GenericInstanceType))
+            var genericParameter = typeRef as GenericParameter;
+            if (genericParameter == null)
             {
-                elementType = elementType.Resolve()?.BaseType?.Resolve();
+                throw new ArgumentException("Type Reference must be a GenericParameter");
             }
 
-            if (!(elementType is GenericInstanceType genericType))
+            var genericType = genericParameter.DeclaringType.GetGenericInstanceType(elementType);
+
+            return genericType.GenericArguments[genericParameter.Position];
+        }
+
+        public static GenericInstanceType GetGenericInstanceType(this TypeReference typeRef, TypeReference elementType)
+        {
+            elementType = elementType.Resolve()?.BaseType;
+            var typeDef = typeRef.Resolve();
+            while (elementType != null && typeDef != elementType.Resolve())
             {
-                return typeRef;
+                elementType = elementType.Resolve()?.BaseType;
             }
 
-            if (typeRef is GenericParameter genericParameter)
-            {
-                return genericType.GenericArguments[genericParameter.Position];
-            }
-
-            return typeRef;
+            return elementType as GenericInstanceType;
         }
     }
 }

@@ -91,5 +91,51 @@ namespace Compiler.Tests
             isTypeString.Should().BeTrue();
             isTypeEnum.Should().BeFalse();
         }
+
+        [TestMethod]
+        public void GetPropertyOrFieldInfo_Should_Handle_Generic_Parameter()
+        {
+            MonoCecilVersion.GetPropertyOrFieldInfo("MyProperty", "Experimental", "TypeWithGenericParameter",
+                out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
+                out var isTypeString, out var isTypeEnum);
+            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            memberTypeNamespace.Should().Be("System");
+            memberTypeName.Should().Be("String");
+            isTypeString.Should().BeTrue();
+            isTypeEnum.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void GetPropertyOrFieldInfo_Should_Handle_NonGeneric_Parameter()
+        {
+            MonoCecilVersion.GetPropertyOrFieldInfo("MyNonGenericProperty", "Experimental", "TypeWithGenericParameter",
+                out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
+                out var isTypeString, out var isTypeEnum);
+            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            memberTypeNamespace.Should().Be("System");
+            memberTypeName.Should().Be("Int32");
+            isTypeString.Should().BeFalse();
+            isTypeEnum.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void GetFiled_Should_Return_Full_TypeName()
+        {
+            var res = MonoCecilVersion.GetField("MyField", "Experimental", "TypeWithGenericParameter", null);
+            res.Should().Be("global::Experimental.TypeWithGenericParameter.MyField");
+        }
+
+        [TestMethod]
+        public void GetAttachedPropertyGetMethodInfo_Should_Handle_Generic()
+        {
+            MonoCecilVersion.GetAttachedPropertyGetMethodInfo("GetHasSomething", "Experimental", "TypeWithGenericParameter",
+                out var declaringTypeName, out var returnValueNamespaceName, out var returnValueLocalTypeName,
+                out var isTypeString, out var isTypeEnum);
+            declaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            returnValueNamespaceName.Should().Be("System");
+            returnValueLocalTypeName.Should().Be("Boolean");
+            isTypeString.Should().BeFalse();
+            isTypeEnum.Should().BeFalse();
+        }
     }
 }

@@ -303,7 +303,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             var propertyType = propertyInfo.PropertyType;
             if (propertyType.IsGenericParameter)
             {
-                return propertyType.ResolveGenericParameter(elementType.BaseType);
+                return propertyType.ResolveGenericParameter(elementType);
             }
             return propertyType;
         }
@@ -806,7 +806,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             var field = FindFieldDeep(type, fieldName, false, false, assemblyName != type.Module.Name);
             if (field != null &&
                 (field.IsPublic || field.IsAssembly || field.IsFamilyOrAssembly))
-                return $"{GetTypeNameIncludingGenericArguments(field.DeclaringType, true)}.{field.Name}";
+                return $"{GetTypeNameIncludingGenericArguments(type, true)}.{field.Name}";
 
             return null;
         }
@@ -834,7 +834,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             var elementType = FindType(namespaceName, localTypeName, assemblyNameIfAny);
             var propertyInfo = FindPropertyDeep(elementType, propertyOrFieldName);
             TypeReference propertyOrFieldType;
-            TypeDefinition propertyOrFieldDeclaringType;
+            TypeReference propertyOrFieldDeclaringType;
 
             if (propertyInfo == null)
             {
@@ -850,6 +850,16 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             {
                 propertyOrFieldType = propertyInfo.PropertyType;
                 propertyOrFieldDeclaringType = propertyInfo.DeclaringType;
+            }
+
+            if (propertyOrFieldType.IsGenericParameter)
+            {
+                propertyOrFieldType = propertyOrFieldType.ResolveGenericParameter(elementType);
+            }
+
+            if (propertyOrFieldDeclaringType.GenericParameters.Any())
+            {
+                propertyOrFieldDeclaringType = propertyOrFieldDeclaringType.GetGenericInstanceType(elementType);
             }
 
             memberDeclaringTypeName = GetTypeNameIncludingGenericArguments(propertyOrFieldDeclaringType, true);
@@ -872,7 +882,12 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                     dependencyObjectType.IsAssignableFrom(m.Parameters[0].ParameterType.Resolve()));
                 if (method != null)
                 {
-                    declaringTypeName = GetTypeNameIncludingGenericArguments(method.DeclaringType, true);
+                    TypeReference declaringType = method.DeclaringType;
+                    if (declaringType.HasGenericParameters)
+                    {
+                        declaringType = declaringType.GetGenericInstanceType(elementType);
+                    }
+                    declaringTypeName = GetTypeNameIncludingGenericArguments(declaringType, true);
                     returnValueNamespaceName = BuildPropertyPathRecursively(method.ReturnType);
                     returnValueLocalTypeName = GetTypeNameIncludingGenericArguments(method.ReturnType, false);
                     isTypeString = method.ReturnType.IsString();
