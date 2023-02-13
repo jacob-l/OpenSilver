@@ -8,6 +8,8 @@
   </PropertyGroup>
 
     <ItemGroup>
+    <Compile Include="ClassWithNestedEnum.cs" />
+    <Compile Include="DerivedContentControl.cs" />
     <Compile Include="GenericType.cs" />
     <Compile Include="PlanetStructure.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

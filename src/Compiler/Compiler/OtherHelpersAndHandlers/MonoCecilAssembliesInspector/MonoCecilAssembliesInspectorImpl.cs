@@ -143,9 +143,8 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                         if (typeIfFound == null)
                         {
                             //try to find a matching nested type.
-                            fullTypeNameToFind = namespaceToLookInto + "+" + localTypeName;
-                            typeIfFound =
-                                assembly.MainModule.Types.FirstOrDefault(x => x.FullName == fullTypeNameToFind);
+                            var containerType = assembly.MainModule.Types.FirstOrDefault(x => x.Name == namespaceToLookInto);
+                            typeIfFound = containerType?.NestedTypes.FirstOrDefault(x => x.Name == localTypeName);
                         }
 
                         if (typeIfFound != null)

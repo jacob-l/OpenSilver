@@ -22,8 +22,9 @@ namespace Compiler.Tests
     [TestClass]
     public class MonoCecilAssembliesInspectorTest
     {
-        private const string ExperimentalSubjectName = "Experimental";
+        private const string ExperimentalSubjectName = ExperimentalNamespace;
         private const string ExperimentalSubjectDll = ExperimentalSubjectName + ".dll";
+        private const string ExperimentalNamespace = "Experimental";
 
         private static readonly MonoCecilAssembliesInspectorImpl MonoCecilVersion = new();
 
@@ -81,7 +82,7 @@ namespace Compiler.Tests
         [TestMethod]
         public void GetPropertyOrFieldTypeInfo_Should_Handle_Generic_Parameters()
         {
-            MonoCecilVersion.GetPropertyOrFieldTypeInfo("MyProperty", "Experimental", "TypeWithGenericParameter",
+            MonoCecilVersion.GetPropertyOrFieldTypeInfo("MyProperty", ExperimentalNamespace, "TypeWithGenericParameter",
                 out var propertyNamespaceName, out var propertyLocalTypeName, out var propertyAssemblyName,
                 out var isTypeString,
                 out var isTypeEnum);
@@ -95,7 +96,7 @@ namespace Compiler.Tests
         [TestMethod]
         public void GetPropertyOrFieldInfo_Should_Handle_Generic_Parameter()
         {
-            MonoCecilVersion.GetPropertyOrFieldInfo("MyProperty", "Experimental", "TypeWithGenericParameter",
+            MonoCecilVersion.GetPropertyOrFieldInfo("MyProperty", ExperimentalNamespace, "TypeWithGenericParameter",
                 out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
                 out var isTypeString, out var isTypeEnum);
             memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
@@ -108,7 +109,7 @@ namespace Compiler.Tests
         [TestMethod]
         public void GetPropertyOrFieldInfo_Should_Handle_NonGeneric_Parameter()
         {
-            MonoCecilVersion.GetPropertyOrFieldInfo("MyNonGenericProperty", "Experimental", "TypeWithGenericParameter",
+            MonoCecilVersion.GetPropertyOrFieldInfo("MyNonGenericProperty", ExperimentalNamespace, "TypeWithGenericParameter",
                 out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
                 out var isTypeString, out var isTypeEnum);
             memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
@@ -121,14 +122,14 @@ namespace Compiler.Tests
         [TestMethod]
         public void GetFiled_Should_Return_Full_TypeName()
         {
-            var res = MonoCecilVersion.GetField("MyField", "Experimental", "TypeWithGenericParameter", null);
+            var res = MonoCecilVersion.GetField("MyField", ExperimentalNamespace, "TypeWithGenericParameter", null);
             res.Should().Be("global::Experimental.TypeWithGenericParameter.MyField");
         }
 
         [TestMethod]
         public void GetAttachedPropertyGetMethodInfo_Should_Handle_Generic()
         {
-            MonoCecilVersion.GetAttachedPropertyGetMethodInfo("GetHasSomething", "Experimental", "TypeWithGenericParameter",
+            MonoCecilVersion.GetAttachedPropertyGetMethodInfo("GetHasSomething", ExperimentalNamespace, "TypeWithGenericParameter",
                 out var declaringTypeName, out var returnValueNamespaceName, out var returnValueLocalTypeName,
                 out var isTypeString, out var isTypeEnum);
             declaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
@@ -136,6 +137,28 @@ namespace Compiler.Tests
             returnValueLocalTypeName.Should().Be("Boolean");
             isTypeString.Should().BeFalse();
             isTypeEnum.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void GetFieldName_Should_Handle_Nested_Enum_Type()
+        {
+            var res = MonoCecilVersion.GetFieldName("Selectfromlist", "ClassWithNestedEnum", "InputBehavior");
+
+            res.Should().Be("SelectFromList");
+        }
+
+        [TestMethod]
+        public void GetContentPropertyName_Should_Return_Value()
+        {
+            var res = MonoCecilVersion.GetContentPropertyName("System.Windows.Controls", "ContentControl");
+            res.Should().Be("Content");
+        }
+
+        [TestMethod]
+        public void GetContentPropertyName_Should_Handle_3rd_Party()
+        {
+            var res = MonoCecilVersion.GetContentPropertyName(ExperimentalNamespace, "DerivedContentControl", ExperimentalSubjectName);
+            res.Should().Be("Content");
         }
     }
 }
