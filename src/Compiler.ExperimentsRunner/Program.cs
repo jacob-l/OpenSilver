@@ -119,7 +119,6 @@ namespace Compiler.ExperimentsRunner
             //var res = reflectionOnSeparateAppDomain.IsPropertyOrFieldACollection("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
             //var res = reflectionOnSeparateAppDomain.IsPropertyAttached("RowDefinitions", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid", "http://schemas.microsoft.com/winfx/2006/xaml/presentation", "Grid");
 
-            //var res = reflectionOnSeparateAppDomain.IsTypeAnEnum("OpenSilver.Samples.Showcase", "PlanetStructure");
             //Console.WriteLine(res);
             /*
             var res = reflectionOnSeparateAppDomain.GetContentPropertyName("http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk", "Page", null); ;
@@ -377,7 +376,6 @@ outputResourcesPath: outputResourcesPath, logger: new Logger());
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Ref\\7.0.2\\ref\\net7.0\\System.Xml.XPath.dll", false, true, false, "DotNetBrowser.Chromium", false);
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Ref\\7.0.2\\ref\\net7.0\\System.Xml.XPath.XDocument.dll", false, true, false, "DotNetBrowser.Chromium", false);
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Ref\\7.0.2\\ref\\net7.0\\WindowsBase.dll", false, true, false, "DotNetBrowser.Chromium", false);
-            reflectionOnSeparateAppDomain.LoadAssemblyMscorlib(true, false, "DotNetBrowser.Chromium");
             reflectionOnSeparateAppDomain.LoadAssembly("C:\\Users\\user\\Documents\\GitHub\\OpenSilver.Samples.Showcase\\src\\bin\\SL.Release\\net7.0\\\\OpenSilver.Samples.Showcase.dll", true, true, false, "DotNetBrowser.Chromium", false);
         }
     }

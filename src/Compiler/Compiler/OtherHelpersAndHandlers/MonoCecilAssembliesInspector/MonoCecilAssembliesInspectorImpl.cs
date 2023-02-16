@@ -49,16 +49,34 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         private readonly Dictionary<string, Dictionary<string, HashSet<string>>>
             _assemblyNameToXmlNamespaceToClrNamespaces = new Dictionary<string, Dictionary<string, HashSet<string>>>();
 
-        private readonly Dictionary<string, AssemblyDefinition> _loadedAssemblySimpleNameToAssembly =
+        private Dictionary<string, AssemblyDefinition> _loadedAssemblySimpleNameToAssembly =
             new Dictionary<string, AssemblyDefinition>();
 
         private readonly Dictionary<string, TypeDefinition> _typeNameToType = new Dictionary<string, TypeDefinition>();
+
+        private CustomAssemblyDefinitionResolver _customAssemblyDefinitionResolver;
+
+        public MonoCecilAssembliesInspectorImpl()
+        {
+            _customAssemblyDefinitionResolver = new CustomAssemblyDefinitionResolver(assemblyName =>
+            {
+                if (!_loadedAssemblySimpleNameToAssembly.ContainsKey(assemblyName))
+                {
+                    return null;
+                }
+                var res = _loadedAssemblySimpleNameToAssembly[assemblyName];
+                return res;
+            });
+        }
 
         public void Dispose()
         {
             foreach (var kvp in _loadedAssemblySimpleNameToAssembly) kvp.Value.Dispose();
 
             _loadedAssemblySimpleNameToAssembly.Clear();
+            _customAssemblyDefinitionResolver.Dispose();
+            _loadedAssemblySimpleNameToAssembly = null;
+            _customAssemblyDefinitionResolver = null;
         }
 
         private static string GetExtension(string str)
@@ -78,9 +96,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         {
             return AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters
             {
-                AssemblyResolver =
-                    new CustomAssemblyDefinitionResolver(assemblyName =>
-                        _loadedAssemblySimpleNameToAssembly[assemblyName])
+                AssemblyResolver = _customAssemblyDefinitionResolver
             });
         }
 
@@ -604,6 +620,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             {
                 field = FindFieldDeep(type, fieldNameIgnoreCase, true, true, true);
                 if (field == null)
+                {
                     // If the field isn't found "as is", we try to interpret it as the int corresponding to a field
                     if (int.TryParse(fieldNameIgnoreCase, out var value))
                     {
@@ -611,6 +628,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                         var trueFieldName = fd?.Name;
                         field = FindFieldDeep(type, trueFieldName, true, true, true);
                     }
+                }
             }
             else
             {
