@@ -189,6 +189,7 @@ namespace DotNetForHtml5.Compiler
             }
             catch (Exception ex)
             {
+                Debugger.Launch();
                 //-----------------------------------------------------
                 // Dispose the static instance of the "ReflectionOnSeparateAppDomainHandler":
                 //-----------------------------------------------------
