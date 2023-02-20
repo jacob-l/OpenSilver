@@ -122,6 +122,73 @@ window.callJSUnmarshalled = function (javaScriptToExecute) {
     else if (result == null) {
         return null;
     } else {
+        return BINDING.js_to_mono_obj(result + " [NOT USABLE DIRECTLY IN C#] (" + resultType + ")");
+    }
+};
+
+window.Utf8ArrayToStr = (function () {
+    var charCache = new Array(128);  // Preallocate the cache for the common single byte chars
+    var charFromCodePt = String.fromCodePoint || String.fromCharCode;
+    var result = [];
+
+    return function (array) {
+        var codePt, byte1;
+        var buffLen = array.length;
+
+        result.length = 0;
+
+        for (var i = 0; i < buffLen;) {
+            byte1 = array[i++];
+
+            if (byte1 <= 0x7F) {
+                codePt = byte1;
+            } else if (byte1 <= 0xDF) {
+                codePt = ((byte1 & 0x1F) << 6) | (array[i++] & 0x3F);
+            } else if (byte1 <= 0xEF) {
+                codePt = ((byte1 & 0x0F) << 12) | ((array[i++] & 0x3F) << 6) | (array[i++] & 0x3F);
+            } else if (String.fromCodePoint) {
+                codePt = ((byte1 & 0x07) << 18) | ((array[i++] & 0x3F) << 12) | ((array[i++] & 0x3F) << 6) | (array[i++] & 0x3F);
+            } else {
+                codePt = 63;    // Cannot convert four byte code points, so use "?" instead
+                i += 3;
+            }
+
+            result.push(charCache[codePt] || (charCache[codePt] = charFromCodePt(codePt)));
+        }
+
+        return result.join('');
+    };
+})();
+
+function toUint16Array(e) {
+    const t = e + 12;
+    const n = Module.HEAP32[t >> 2];
+    return new Uint16Array(Module.HEAPU16.buffer, t + 4, n);
+};
+
+window.charArrAddress = 0;
+
+window.register = function (charArrAddress) {
+    window.charArrAddress = charArrAddress;
+}
+
+window.callJSUnmarshalledSharedMemory = function (length) {
+    //var byteArray = window.toUint16Array(javaScriptToExecute);
+    const t = window.charArrAddress + 12;
+    //const n = Module.HEAP32[t >> 2];
+    var byteArray = new Uint16Array(Module.HEAPU16.buffer, t + 4, length);
+
+    var javaScriptToExecute = window.Utf8ArrayToStr(byteArray);
+    //console.log(javaScriptToExecute);
+    var result = eval(javaScriptToExecute);
+    var resultType = typeof result;
+    if (resultType == 'string' || resultType == 'number' || resultType == 'boolean') {
+        return BINDING.js_to_mono_obj(result);
+    }
+    else {
+        if (resultType === 'undefined')
+            return BINDING.js_to_mono_obj("[UNDEFINED]");
+        else
             return BINDING.js_to_mono_obj(result + " [NOT USABLE DIRECTLY IN C#] (" + resultType + ")");
     }
 }; 

@@ -13,7 +13,9 @@
 
 using System;
 using System.Collections.Generic;
+using DotNetForHtml5;
 using DotNetForHtml5.Core;
+using Runtime.OpenSilver.PublicAPI.Interop;
 
 #if MIGRATION
 using System.Windows;
@@ -26,7 +28,7 @@ namespace CSHTML5.Internal
     internal static class INTERNAL_SimulatorExecuteJavaScript
     {
         internal static bool EnableInteropLogging;
-        static List<string> _pendingAsyncJavaScriptToExecute = new List<string>();
+        //static List<string> _pendingAsyncJavaScriptToExecute = new List<string>();
         static bool _disableAsyncJavaScriptExecution = false;
         static bool _isDispatcherPending = false;
         static bool _isInsideMethodToRunAnActionAndThenExecuteItsPendingJS = false; //todo: make sure this variable is thread-safe.
@@ -40,26 +42,13 @@ namespace CSHTML5.Internal
         /// <returns></returns>
         internal static object ExecuteJavaScriptSync(string javaScriptToExecute, string commentForDebugging = null, bool noImpactOnPendingJSCode = false)
         {
-            if (!noImpactOnPendingJSCode)
+            if (noImpactOnPendingJSCode)
             {
-                if (EnableInteropLogging)
-                    AddCommentsForDebuggingIfAny(ref javaScriptToExecute, commentForDebugging);
-
-                string aggregatedPendingJavaScriptCode = ReadAndClearAggregatedPendingJavaScriptCode();
-
-                if (!string.IsNullOrWhiteSpace(aggregatedPendingJavaScriptCode))
-                {
-                    javaScriptToExecute = string.Join(Environment.NewLine, new List<string>
-                    {
-                        "// [START OF PENDING JAVASCRIPT]",
-                        aggregatedPendingJavaScriptCode,
-                        "// [END OF PENDING JAVASCRIPT]" + Environment.NewLine,
-                        javaScriptToExecute
-                    });
-                }
+                return INTERNAL_Simulator.JavaScriptExecutionHandler.ExecuteJavaScriptWithResult(javaScriptToExecute);
             }
 
-            return PerformActualInteropCall(javaScriptToExecute, "SYNC");
+            PendingJavascriptSharedMemory.AddJavascript(javaScriptToExecute);
+            return PendingJavascriptSharedMemory.ExecutePending<object>((IJavaScriptExecutionHandler2)INTERNAL_Simulator.JavaScriptExecutionHandler);
         }
 
         /// <summary>
@@ -86,10 +75,7 @@ namespace CSHTML5.Internal
                 // This significantly improves performance.
                 //--------------------------------------------------------
 
-                lock (_pendingAsyncJavaScriptToExecute)
-                {
-                    _pendingAsyncJavaScriptToExecute.Add(javaScriptToExecute);
-                }
+                PendingJavascriptSharedMemory.AddJavascript(javaScriptToExecute);
 
                 if (_isInsideMethodToRunAnActionAndThenExecuteItsPendingJS)
                 {
@@ -144,40 +130,18 @@ namespace CSHTML5.Internal
 #if OPTIMIZATION_LOG
                 Console.WriteLine("[OPTIMIZATION] Direct call");
 #endif
-                PerformActualInteropCall(javaScriptToExecute, "ASYNC DISABLED");
+                throw new NotImplementedException("WE DO NOT SUPPORT DISABLED");
             }
         }
 
         static void ExecutePendingJavaScriptCode(string reasonForPerformingTheCallNow)
         {
-            string aggregatedPendingJavaScriptCode = ReadAndClearAggregatedPendingJavaScriptCode();
-
-            if (!string.IsNullOrWhiteSpace(aggregatedPendingJavaScriptCode))
+            if (PendingJavascriptSharedMemory.IsEmpty)
             {
-                PerformActualInteropCall(aggregatedPendingJavaScriptCode, reasonForPerformingTheCallNow);
+                return;
             }
-        }
 
-        static string ReadAndClearAggregatedPendingJavaScriptCode()
-        {
-#if OPTIMIZATION_LOG
-            Console.WriteLine("[OPTIMIZATION] About to reset _isDispatcherPending: " + _isDispatcherPending.ToString());
-#endif
-            _isDispatcherPending = false;
-
-#if OPTIMIZATION_LOG
-            Console.WriteLine("[OPTIMIZATION] Done resetting _isDispatcherPending: " + _isDispatcherPending.ToString());
-#endif
-            lock (_pendingAsyncJavaScriptToExecute)
-            {
-                if (_pendingAsyncJavaScriptToExecute.Count == 0)
-                    return null;
-
-                _pendingAsyncJavaScriptToExecute.Add("");
-                string aggregatedPendingJavaScriptCode = string.Join(";\r\n", _pendingAsyncJavaScriptToExecute);
-                _pendingAsyncJavaScriptToExecute.Clear();
-                return aggregatedPendingJavaScriptCode;
-            }
+            PendingJavascriptSharedMemory.ExecutePending<object>((IJavaScriptExecutionHandler2)INTERNAL_Simulator.JavaScriptExecutionHandler);
         }
 
         static void AddCommentsForDebuggingIfAny(ref string javaScriptToExecute, string commentForDebugging)
@@ -186,7 +150,7 @@ namespace CSHTML5.Internal
                 javaScriptToExecute = "//" + commentForDebugging + Environment.NewLine + javaScriptToExecute;
         }
 
-        static object PerformActualInteropCall(string javaScriptToExecute, string reasonForPerformingTheCallNow)
+        static object PerformActualInteropCall2(string javaScriptToExecute, string reasonForPerformingTheCallNow)
         {
             if (EnableInteropLogging)
             {
