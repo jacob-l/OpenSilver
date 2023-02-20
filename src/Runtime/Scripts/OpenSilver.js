@@ -191,4 +191,26 @@ window.callJSUnmarshalledSharedMemory = function (length) {
         else
             return BINDING.js_to_mono_obj(result + " [NOT USABLE DIRECTLY IN C#] (" + resultType + ")");
     }
-}; 
+};
+
+window.callJSUnmarshalledSharedMemory2 = function (length) {
+    //var byteArray = window.toUint16Array(javaScriptToExecute);
+    const t = window.charArrAddress + 12;
+    //const n = Module.HEAP32[t >> 2];
+    var byteArray = new Uint8Array(Module.HEAPU8.buffer, t + 4, length);
+
+    //var javaScriptToExecute = String.fromCharCode(...byteArray);
+    javaScriptToExecute = new TextDecoder().decode(byteArray);
+    //console.log(javaScriptToExecute);
+    var result = eval(javaScriptToExecute);
+    var resultType = typeof result;
+    if (resultType == 'string' || resultType == 'number' || resultType == 'boolean') {
+        return BINDING.js_to_mono_obj(result);
+    }
+    else {
+        if (resultType === 'undefined')
+            return BINDING.js_to_mono_obj("[UNDEFINED]");
+        else
+            return BINDING.js_to_mono_obj(result + " [NOT USABLE DIRECTLY IN C#] (" + resultType + ")");
+    }
+};

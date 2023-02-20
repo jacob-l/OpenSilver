@@ -8,7 +8,7 @@ namespace Runtime.OpenSilver.PublicAPI.Interop
 {
     public static class PendingJavascriptSharedMemory
     {
-        private static readonly char[] CharArr = new char[512 * 1024 * 1]; //1mb
+        private static readonly byte[] CharArr = new byte[1024 * 1024 * 1]; //1mb
 
         private static IJavaScriptExecutionHandler2 _executionHandler;
 
@@ -20,7 +20,7 @@ namespace Runtime.OpenSilver.PublicAPI.Interop
             try
             {
                 _executionHandler = executionHandler;
-                executionHandler.InvokeUnmarshalled<char[], object>("register", CharArr);
+                executionHandler.InvokeUnmarshalled<byte[], object>("register", CharArr);
                 //Console.WriteLine("INITIALIZE 2");
             }
             catch(Exception ex)
@@ -35,17 +35,18 @@ namespace Runtime.OpenSilver.PublicAPI.Interop
             //Console.WriteLine("AddJavascript 1");
             try
             {
-                CharArr[currentLength++] = '\n';
-                CharArr[currentLength++] = ';';
-                for (var i = 0; i < javascript.Length; i++)
-                {
-                    CharArr[currentLength + i] = javascript[i];
-                }
+                var delimiter = Encoding.UTF8.GetBytes("\n;");
+                Buffer.BlockCopy(delimiter, 0, CharArr, currentLength, delimiter.Length);
+                currentLength += delimiter.Length;
 
-                currentLength += javascript.Length;
+                var js = Encoding.UTF8.GetBytes(javascript);
+
+                Buffer.BlockCopy(js, 0, CharArr, currentLength, js.Length);
+                currentLength += js.Length;
+
                 //Console.WriteLine("AddJavascript 2");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("INSIDE AddJavascript - " + ex.Message);
                 throw;
@@ -62,7 +63,7 @@ namespace Runtime.OpenSilver.PublicAPI.Interop
                     Initialize(executionHandler);
                 }
 
-                var res = _executionHandler.InvokeUnmarshalled<int, T>("callJSUnmarshalledSharedMemory",
+                var res = _executionHandler.InvokeUnmarshalled<int, T>("callJSUnmarshalledSharedMemory2",
                     currentLength);
                 currentLength = 0;
                 //Console.WriteLine("ExecutePending 2");
