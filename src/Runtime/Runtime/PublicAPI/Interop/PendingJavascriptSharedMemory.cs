@@ -8,7 +8,7 @@ namespace Runtime.OpenSilver.PublicAPI.Interop
 {
     public static class PendingJavascriptSharedMemory
     {
-        private static readonly byte[] CharArr = new byte[1024 * 1024 * 1]; //1mb
+        private static readonly byte[] CharArr = new byte[1024 * 1024 * 2]; //1mb
 
         private static IJavaScriptExecutionHandler2 _executionHandler;
 
