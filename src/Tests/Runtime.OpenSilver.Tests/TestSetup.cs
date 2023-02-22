@@ -19,6 +19,7 @@ using DotNetForHtml5.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -51,40 +52,21 @@ namespace Runtime.OpenSilver.Tests
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
+            var jsBuffer = Array.Empty<byte>();
             var javaScriptExecutionHandlerMock = new Mock<IJavaScriptExecutionHandler2>();
             javaScriptExecutionHandlerMock
                 .Setup(x => x.ExecuteJavaScriptWithResult(It.IsAny<string>()))
-                .Returns<string>(param =>
+                .Returns<string>(ExecuteJsMock);
+            javaScriptExecutionHandlerMock
+                .Setup(x => x.InvokeUnmarshalled<byte[], object>(It.IsAny<string>(), It.IsAny<byte[]>()))
+                .Returns<string, byte[]>((name, bytes) =>
                 {
-                    var e = new ExecuteJavascriptEventArgs
-                    {
-                        Javascript = param
-                    };
-
-                    OnExecuteJavascript(e);
-
-                    if (e.Handled)
-                    {
-                        return e.Result;
-                    }
-
-                    // Mocks INTERNAL_GridHelpers isCSSGridSupported() and isMSGrid()
-                    if (param == @"document.isGridSupported" || param == @"document.isMSGrid")
-                    {
-                        return false;
-                    }
-                    // Mocks Simulator portion of UIElement.TransformToVisual
-                    // JS code example is:
-                    // document.callScriptSafe("154","(document.getElementByIdSafe(\"id31\").getBoundingClientRect().left -
-                    // document.getElementByIdSafe(\"id1\").getBoundingClientRect().left) + '|' +
-                    // (document.getElementByIdSafe(\"id31\").getBoundingClientRect().top -
-                    // document.getElementByIdSafe(\"id1\").getBoundingClientRect().top)",108)
-                    else if (Regex.Matches(param, @"\(.+getBoundingClientRect\(\).left - .+.getBoundingClientRect\(\).left\) \+ '\|' \+ \(.+getBoundingClientRect\(\).top - .+.getBoundingClientRect\(\).top\)").Count == 1)
-                    {
-                        return JsonDocument.Parse(@"""0|0""").RootElement;
-                    }
-                    return new JsonElement();
+                    jsBuffer = bytes;
+                    return null;
                 });
+            javaScriptExecutionHandlerMock
+                .Setup(x => x.InvokeUnmarshalled<int, object>(It.IsAny<string>(), It.IsAny<int>()))
+                .Returns<string, int>((name, length) => ExecuteJsMock(Encoding.UTF8.GetString(jsBuffer, 0, length)));
 
             var javaScriptExecutionHandler2 = javaScriptExecutionHandlerMock.Object;
             INTERNAL_Simulator.JavaScriptExecutionHandler2 = javaScriptExecutionHandler2;
@@ -94,6 +76,38 @@ namespace Runtime.OpenSilver.Tests
             {
                 RootVisual = new Grid(),
             };
+        }
+
+        private static object ExecuteJsMock(string param)
+        {
+            var e = new ExecuteJavascriptEventArgs
+            {
+                Javascript = param
+            };
+
+            OnExecuteJavascript(e);
+
+            if (e.Handled)
+            {
+                return e.Result;
+            }
+
+            // Mocks INTERNAL_GridHelpers isCSSGridSupported() and isMSGrid()
+            if (param == @"document.isGridSupported" || param == @"document.isMSGrid")
+            {
+                return false;
+            }
+            // Mocks Simulator portion of UIElement.TransformToVisual
+            // JS code example is:
+            // document.callScriptSafe("154","(document.getElementByIdSafe(\"id31\").getBoundingClientRect().left -
+            // document.getElementByIdSafe(\"id1\").getBoundingClientRect().left) + '|' +
+            // (document.getElementByIdSafe(\"id31\").getBoundingClientRect().top -
+            // document.getElementByIdSafe(\"id1\").getBoundingClientRect().top)",108)
+            if (Regex.Matches(param, @"\(.+getBoundingClientRect\(\).left - .+.getBoundingClientRect\(\).left\) \+ '\|' \+ \(.+getBoundingClientRect\(\).top - .+.getBoundingClientRect\(\).top\)").Count == 1)
+            {
+                return JsonDocument.Parse(@"""0|0""").RootElement;
+            }
+            return new JsonElement();
         }
 
         public static void AttachVisualChild(UIElement element)
