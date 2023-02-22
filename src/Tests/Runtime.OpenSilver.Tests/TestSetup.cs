@@ -51,7 +51,7 @@ namespace Runtime.OpenSilver.Tests
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
-            Mock<IJavaScriptExecutionHandler> javaScriptExecutionHandlerMock = new Mock<IJavaScriptExecutionHandler>();
+            var javaScriptExecutionHandlerMock = new Mock<IJavaScriptExecutionHandler2>();
             javaScriptExecutionHandlerMock
                 .Setup(x => x.ExecuteJavaScriptWithResult(It.IsAny<string>()))
                 .Returns<string>(param =>
@@ -86,8 +86,8 @@ namespace Runtime.OpenSilver.Tests
                     return new JsonElement();
                 });
 
-            IJavaScriptExecutionHandler javaScriptExecutionHandler = javaScriptExecutionHandlerMock.Object;
-            INTERNAL_Simulator.JavaScriptExecutionHandler = javaScriptExecutionHandler;
+            var javaScriptExecutionHandler2 = javaScriptExecutionHandlerMock.Object;
+            INTERNAL_Simulator.JavaScriptExecutionHandler2 = javaScriptExecutionHandler2;
 
             // Instantiating Application because it sets itself as Application.Current
             _ = new Application

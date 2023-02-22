@@ -19,9 +19,10 @@ namespace DotNetForHtml5
 {
     public static class Cshtml5Initializer
     {
-        public static void Initialize(IJavaScriptExecutionHandler2 executionHandler)
+        public static void Initialize(IJavaScriptExecutionHandler2 executionHandler, int pendingJsBufferSize = 1024 * 1024 * 2)
         {
             INTERNAL_Simulator.JavaScriptExecutionHandler2 = executionHandler;
+            INTERNAL_Simulator.PendingJsBufferSize = pendingJsBufferSize;
 #if MIGRATION
             EmulatorWithoutJavascript.StaticConstructorsCaller.EnsureStaticConstructorOfCommonTypesIsCalled(typeof(System.Windows.Controls.Button).Assembly);
 #else

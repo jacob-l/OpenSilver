@@ -194,5 +194,7 @@ namespace DotNetForHtml5.Core
 #endif
 
         public static Func<object, object> ConvertBrowserResult { get; set; }
+
+        internal static int PendingJsBufferSize { get; set; } = 1024 * 1024;
     }
 }
