@@ -27,6 +27,7 @@
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="OpenSilver.Compiler.XamlPreprocessor" />
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="OpenSilver.Compiler.AfterXamlPreprocessor" />
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="OpenSilver.Compiler.TypeScriptDefToCSharp" />
+  <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.dll" TaskName="OpenSilver.Compiler.EntryPoints.BrowserFilesGenerator" />
   <UsingTask AssemblyFile="$(MSBuildThisFileDirectory)..\tools\OpenSilver.Compiler.Resources.dll" TaskName="OpenSilver.Compiler.Resources.ResourcesExtractorAndCopier" />
 
   <ItemGroup>
@@ -81,7 +82,7 @@
   Set the default values for some properties (for example, if the output paths have not been specified, we set the default ones):
   ============================================================-->
   <PropertyGroup Condition="'$(CompilerBuildNumber)'==''">
-	  <CompilerBuildNumber>8</CompilerBuildNumber>
+	  <CompilerBuildNumber>9</CompilerBuildNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(IsSecondPass)'==''">
     <IsSecondPass>False</IsSecondPass>
@@ -124,27 +125,38 @@
         >$(OutputPath)</OutputAssemblyDirectory>
   </PropertyGroup>
 
-	<!--============================================================
-      Check if msbuild is using the compiler adapted to the package:
-	 ============================================================-->
-	<Target Name="MessageWrongCompiler">
-		<Error Condition="$(IsCompilerVersionChecked)==''"
-			 Text="Compiler initialization error. Please restart Visual Studio or manually kill the Msbuild process, then recompile the solution to fix this error."/>
-	</Target>
-	
-	<Target Name="CheckCompilerVersion">
-		<ValidateCompilerVersion
-			TargetCompilerBuildNumber="$(CompilerBuildNumber)" ContinueOnError="ErrorAndStop">
-			<Output TaskParameter="IsCompilerVersionChecked" PropertyName="IsCompilerVersionChecked"/>
-		</ValidateCompilerVersion>
-		<OnError ExecuteTargets="MessageWrongCompiler"/>
-	</Target>
-	
-	
-	
   <!--============================================================
-      Change the names of the EmbeddedResources so they keep their original names.
-   ============================================================-->
+  Check if msbuild is using the compiler adapted to the package:
+  ============================================================-->
+  <Target Name="MessageWrongCompiler">
+    <Error Condition="$(IsCompilerVersionChecked)==''"
+                     Text="Compiler initialization error. Please restart Visual Studio or manually kill the Msbuild process, then recompile the solution to fix this error."/>
+  </Target>
+
+  <Target Name="CheckCompilerVersion">
+    <ValidateCompilerVersion
+                  TargetCompilerBuildNumber="$(CompilerBuildNumber)" ContinueOnError="ErrorAndStop">
+      <Output TaskParameter="IsCompilerVersionChecked" PropertyName="IsCompilerVersionChecked"/>
+    </ValidateCompilerVersion>
+    <OnError ExecuteTargets="MessageWrongCompiler"/>
+  </Target>
+
+  <!--============================================================
+  Exclude old files from Browser project
+  ============================================================-->
+  <PropertyGroup>
+      <IsBrowserProject Condition="'$(OpenSilverType)' != ''">True</IsBrowserProject>
+      <IsBrowserProject Condition="'$(OpenSilverType)' == ''">False</IsBrowserProject>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsBrowserProject)' == 'True'">
+      <Compile Remove="Interop\UnmarshalledJavaScriptExecutionHandler.cs" />
+      <Compile Remove="Pages\Index.cs" />
+  </ItemGroup>
+
+  <!--============================================================
+  Change the names of the EmbeddedResources so they keep their original names.
+  ============================================================-->
   <Target Name="ModifyEmbeddedResourceNames" BeforeTargets="CreateManifestResourceNames">
     <ItemGroup>
       <EmbeddedResource>
@@ -407,6 +419,10 @@
       Flags="$(Flags)"
       />
 
+    <BrowserFilesGenerator Condition="'$(IsBrowserProject)' == 'True'" Namespace="$(RootNamespace)" Location="$(BaseIntermediateOutputPath)">
+        <Output TaskParameter="GeneratedCsFiles" PropertyName="GeneratedCsFiles"/>
+    </BrowserFilesGenerator>
+
     <ItemGroup>
       <!--============================================================
       Make the list of XAML files to convert to CS that are defined in the project.
@@ -422,8 +438,8 @@
       <Content Remove="@(Content)" Condition="'%(Content.Extension)'=='.xaml'" />
       <Compile Include="@(ProcessedFiles)" />
       <Compile Include="@(ProcessedFiles2)" />
-    </ItemGroup> 
-    
+      <Compile Include="$(GeneratedCsFiles)" />
+    </ItemGroup>
   </Target>
 
   <!--============================================================
