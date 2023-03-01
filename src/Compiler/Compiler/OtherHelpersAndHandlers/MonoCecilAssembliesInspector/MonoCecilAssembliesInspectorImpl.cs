@@ -159,7 +159,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
                         if (typeIfFound == null)
                         {
                             //try to find a matching nested type.
-                            var containerType = assembly.MainModule.Types.FirstOrDefault(x => x.Name == namespaceToLookInto);
+                            var containerType = assembly.MainModule.Types.FirstOrDefault(x => x.FullName == namespaceToLookInto);
                             typeIfFound = containerType?.NestedTypes.FirstOrDefault(x => x.Name == localTypeName);
                         }
 
@@ -327,15 +327,17 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
         {
             var fullPath = string.Empty;
             var parentType = type;
+            var rootType = type;
             while ((parentType = parentType.DeclaringType) != null)
             {
                 if (!string.IsNullOrEmpty(fullPath)) fullPath = "." + fullPath;
 
                 fullPath = parentType.Name + fullPath;
+                rootType = parentType;
             }
 
-            fullPath = type.Namespace +
-                       (!string.IsNullOrEmpty(type.Namespace) && !string.IsNullOrEmpty(fullPath) ? "." : string.Empty) +
+            fullPath = rootType.Namespace +
+                       (!string.IsNullOrEmpty(rootType.Namespace) && !string.IsNullOrEmpty(fullPath) ? "." : string.Empty) +
                        fullPath;
             return fullPath;
         }

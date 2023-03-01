@@ -22,7 +22,7 @@ namespace Compiler.Tests
     [TestClass]
     public class MonoCecilAssembliesInspectorTest
     {
-        private const string ExperimentalSubjectName = ExperimentalNamespace;
+        private const string ExperimentalSubjectName = "Experimental";
         private const string ExperimentalSubjectDll = ExperimentalSubjectName + ".dll";
         private const string ExperimentalNamespace = "Experimental";
 
@@ -91,6 +91,20 @@ namespace Compiler.Tests
             propertyAssemblyName.Should().Be("mscorlib");
             isTypeString.Should().BeTrue();
             isTypeEnum.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void GetPropertyOrFieldTypeInfo_Should_Handle_Nested_Enum_Field()
+        {
+            MonoCecilVersion.GetPropertyOrFieldTypeInfo("Behavior", ExperimentalNamespace, "ClassWithField",
+                out var propertyNamespaceName, out var propertyLocalTypeName, out var propertyAssemblyName,
+                out var isTypeString,
+                out var isTypeEnum);
+            propertyNamespaceName.Should().Be("Experimental.ClassWithNestedEnum");
+            propertyLocalTypeName.Should().Be("InputBehavior");
+            propertyAssemblyName.Should().Be(ExperimentalSubjectName);
+            isTypeString.Should().BeFalse();
+            isTypeEnum.Should().BeTrue();
         }
 
         [TestMethod]
