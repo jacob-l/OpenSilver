@@ -28,5 +28,10 @@ namespace Experimental
         {
             return default;
         }
+
+        public GenericType<T> MethodReturnsGenericThis()
+        {
+            return this;
+        }
     }
 }

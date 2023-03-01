@@ -194,5 +194,20 @@ namespace Compiler.Tests
             isTypeString.Should().BeTrue();
             isTypeEnum.Should().BeFalse();
         }
+
+        [TestMethod]
+        public void GetMethodReturnValueTypeInfo_Should_Handle_GenericType()
+        {
+            MonoCecilVersion.GetMethodReturnValueTypeInfo(
+                nameof(TypeWithGenericParameter.MethodReturnsGenericThis),
+                ExperimentalNamespace, nameof(TypeWithGenericParameter), out var returnValueNamespace,
+                out var returnValueTypeName, out var returnValueAssemblyName, out var isTypeString,
+                out var isTypeEnum);
+            returnValueNamespace.Should().Be(ExperimentalNamespace);
+            returnValueTypeName.Should().Be("GenericType<String>");
+            returnValueAssemblyName.Should().Be(ExperimentalSubjectName);
+            isTypeString.Should().BeFalse();
+            isTypeEnum.Should().BeFalse();
+        }
     }
 }
