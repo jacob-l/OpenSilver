@@ -379,7 +379,12 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             if (methodInfo == null)
                 throw new XamlParseException("Method \"" + methodName + "\" not found in type \"" +
                                              elementType + "\".");
-            return methodInfo.ReturnType.Resolve();
+            var returnType = methodInfo.ReturnType;
+            if (returnType.IsGenericParameter)
+            {
+                returnType = returnType.ResolveGenericParameter(elementType);
+            }
+            return returnType.Resolve();
         }
 
         private static IEnumerable<TypeDefinition> GetAllInterfaces(TypeDefinition elementType)

@@ -23,8 +23,10 @@ namespace Experimental
 
         public static void SetHasSomething(UIElement target, bool value) =>
             target.SetValue(HasSomethingProperty, value);
-    }
 
-    public class TypeWithGenericParameter : GenericType<string>
-    { }
+        public T MethodWithGenericReturnType()
+        {
+            return default;
+        }
+    }
 }

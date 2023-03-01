@@ -12,30 +12,35 @@
 \*====================================================================================*/
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using Mono.Cecil;
 
 namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector
 {
     internal class CustomAssemblyDefinitionResolver : BaseAssemblyResolver
     {
-        private readonly Func<string, AssemblyDefinition> _fallbackAssemblyResolver;
+        private readonly Func<string, AssemblyDefinition> _resolvingStrategy;
         private readonly DefaultAssemblyResolver _defaultResolver = new DefaultAssemblyResolver();
 
-        public CustomAssemblyDefinitionResolver(Func<string, AssemblyDefinition> fallbackAssemblyResolver)
+        public CustomAssemblyDefinitionResolver(Func<string, AssemblyDefinition> resolvingStrategy)
         {
-            _fallbackAssemblyResolver = fallbackAssemblyResolver;
+            _resolvingStrategy = resolvingStrategy;
         }
 
         public override AssemblyDefinition Resolve(AssemblyNameReference name)
         {
             try
             {
-                return _defaultResolver.Resolve(name);
+                var res = _defaultResolver.Resolve(name);
+                return res;
             }
             catch (AssemblyResolutionException)
             {
-                return _fallbackAssemblyResolver(name.Name);
+                return _resolvingStrategy(name.Name);
             }
+
+            //return _resolvingStrategy(name.Name) ?? _defaultResolver.Resolve(name);
         }
     }
 }
