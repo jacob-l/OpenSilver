@@ -8,6 +8,7 @@
   </PropertyGroup>
 
     <ItemGroup>
+    <Compile Include="AnotherGenericType.cs" />
     <Compile Include="ClassWithField.cs" />
     <Compile Include="ClassWithNestedEnum.cs" />
     <Compile Include="DerivedContentControl.cs" />

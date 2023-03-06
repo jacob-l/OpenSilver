@@ -363,7 +363,7 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             return result.ToString();
         }
 
-        private TypeDefinition GetMethodReturnValueType(string methodName, string namespaceName, string localTypeName,
+        private TypeReference GetMethodReturnValueType(string methodName, string namespaceName, string localTypeName,
             string assemblyNameIfAny = null)
         {
             var elementType = FindType(namespaceName, localTypeName, assemblyNameIfAny);
@@ -379,12 +379,8 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             if (methodInfo == null)
                 throw new XamlParseException("Method \"" + methodName + "\" not found in type \"" +
                                              elementType + "\".");
-            var returnType = methodInfo.ReturnType;
-            if (returnType.IsGenericParameter)
-            {
-                returnType = returnType.ResolveGenericParameter(elementType);
-            }
-            return returnType.Resolve();
+            var returnType = methodInfo.ReturnType.PopulateGeneric(elementType);
+            return returnType;
         }
 
         private static IEnumerable<TypeDefinition> GetAllInterfaces(TypeDefinition elementType)
@@ -594,9 +590,9 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             var typeDef = GetMethodReturnValueType(methodName, namespaceName, localTypeName, assemblyNameIfAny);
             returnValueNamespaceName = BuildPropertyPathRecursively(typeDef);
             returnValueLocalTypeName = GetTypeNameIncludingGenericArguments(typeDef, false);
-            returnValueAssemblyName = typeDef.Module.Assembly.Name.Name;
+            returnValueAssemblyName = typeDef.Resolve().Module.Assembly.Name.Name;
             isTypeString = typeDef.IsString();
-            isTypeEnum = typeDef.IsEnum;
+            isTypeEnum = typeDef.Resolve().IsEnum;
         }
 
         public string GetEventHandlerType(string eventName, string namespaceName, string typeName, string assemblyName)

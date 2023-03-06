@@ -12,7 +12,9 @@
 \*====================================================================================*/
 
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 using System;
+using System.Linq;
 
 namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector
 {
@@ -41,6 +43,25 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             }
 
             return elementType as GenericInstanceType;
+        }
+
+        public static TypeReference PopulateGeneric(this TypeReference typeRef, TypeReference elementType)
+        {
+            if (typeRef.GenericParameters.Any())
+            {
+                return typeRef.GetGenericInstanceType(elementType);
+            }
+
+            if (typeRef.IsGenericParameter)
+            {
+                return typeRef.ResolveGenericParameter(elementType);
+            }
+
+            if (typeRef is GenericInstanceType instance)
+            {
+                return typeRef.GetGenericInstanceType(elementType);
+            }
+            return typeRef;
         }
     }
 }

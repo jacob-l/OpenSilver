@@ -29,9 +29,9 @@ namespace Experimental
             return default;
         }
 
-        public GenericType<T> MethodReturnsGenericThis()
+        public AnotherGenericType<T> MethodReturnsAnotherGeneric()
         {
-            return this;
+            return new AnotherGenericType<T>();
         }
     }
 }
