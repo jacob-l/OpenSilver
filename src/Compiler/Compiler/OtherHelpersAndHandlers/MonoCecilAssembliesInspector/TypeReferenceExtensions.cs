@@ -45,22 +45,24 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             return elementType as GenericInstanceType;
         }
 
-        public static TypeReference PopulateGeneric(this TypeReference typeRef, TypeReference elementType)
+        public static TypeReference PopulateGeneric(this TypeReference typeRef, TypeReference ancestorElementType, TypeReference currentElementType)
         {
-            if (typeRef.GenericParameters.Any())
-            {
-                return typeRef.GetGenericInstanceType(elementType);
-            }
-
             if (typeRef.IsGenericParameter)
             {
-                return typeRef.ResolveGenericParameter(elementType);
+                return typeRef.ResolveGenericParameter(ancestorElementType);
             }
 
             if (typeRef is GenericInstanceType instance)
             {
-                return typeRef.GetGenericInstanceType(elementType);
+                var cc = currentElementType.GetGenericInstanceType(ancestorElementType);
+                var arg = instance.GenericArguments.Select(ga =>
+                {
+                    var genericParameter = ga as GenericParameter;
+                    return cc.GenericArguments[genericParameter.Position];
+                }).ToArray();
+                return instance.ElementType.MakeGenericInstanceType(arg);
             }
+
             return typeRef;
         }
     }

@@ -373,13 +373,16 @@ namespace DotNetForHtml5.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesIns
             while (methodInfo == null && currentType != null)
             {
                 methodInfo = FindMethod(currentType, methodName);
-                currentType = currentType.BaseType.Resolve();
+                if (methodInfo == null)
+                {
+                    currentType = currentType.BaseType.Resolve();
+                }
             }
 
             if (methodInfo == null)
                 throw new XamlParseException("Method \"" + methodName + "\" not found in type \"" +
                                              elementType + "\".");
-            var returnType = methodInfo.ReturnType.PopulateGeneric(elementType);
+            var returnType = methodInfo.ReturnType.PopulateGeneric(elementType, currentType);
             return returnType;
         }
 
