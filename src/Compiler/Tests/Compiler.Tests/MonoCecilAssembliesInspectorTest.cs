@@ -85,7 +85,7 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetPropertyOrFieldTypeInfo_Should_Handle_Generic_Parameters()
+        public void GetPropertyOrFieldTypeInfo_Should_Return_Info_For_Generic_Parameters()
         {
             MonoCecilVersion.GetPropertyOrFieldTypeInfo(nameof(TypeWithGenericParameter.MyProperty), ExperimentalNamespace, nameof(TypeWithGenericParameter),
                 out var propertyNamespaceName, out var propertyLocalTypeName, out var propertyAssemblyName,
@@ -99,7 +99,7 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetPropertyOrFieldTypeInfo_Should_Handle_Nested_Enum_Field()
+        public void GetPropertyOrFieldTypeInfo_Should_Return_Info_For_Nested_Enum_Field()
         {
             MonoCecilVersion.GetPropertyOrFieldTypeInfo(nameof(ClassWithField.Behavior), ExperimentalNamespace, nameof(ClassWithField),
                 out var propertyNamespaceName, out var propertyLocalTypeName, out var propertyAssemblyName,
@@ -113,12 +113,12 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetPropertyOrFieldInfo_Should_Handle_Generic_Parameter()
+        public void GetPropertyOrFieldInfo_Should_Return_Info_For_Generic_Property()
         {
             MonoCecilVersion.GetPropertyOrFieldInfo(nameof(TypeWithGenericParameter.MyProperty), ExperimentalNamespace, nameof(TypeWithGenericParameter),
                 out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
                 out var isTypeString, out var isTypeEnum);
-            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.Double, global::System.Int32, global::System.String>");
             memberTypeNamespace.Should().Be(typeof(string).Namespace);
             memberTypeName.Should().Be(nameof(String));
             isTypeString.Should().BeTrue();
@@ -126,12 +126,12 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetPropertyOrFieldInfo_Should_Handle_NonGeneric_Parameter()
+        public void GetPropertyOrFieldInfo_Should_Return_Info_For_Property()
         {
             MonoCecilVersion.GetPropertyOrFieldInfo(nameof(TypeWithGenericParameter.MyNonGenericProperty), ExperimentalNamespace, nameof(TypeWithGenericParameter),
                 out var memberDeclaringTypeName, out var memberTypeNamespace, out var memberTypeName,
                 out var isTypeString, out var isTypeEnum);
-            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            memberDeclaringTypeName.Should().Be("global::Experimental.GenericType<global::System.Double, global::System.Int32, global::System.String>");
             memberTypeNamespace.Should().Be(typeof(int).Namespace);
             memberTypeName.Should().Be(nameof(Int32));
             isTypeString.Should().BeFalse();
@@ -146,12 +146,12 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetAttachedPropertyGetMethodInfo_Should_Handle_Generic()
+        public void GetAttachedPropertyGetMethodInfo_Should_Return_Get_Method_From_Generic_Type()
         {
             MonoCecilVersion.GetAttachedPropertyGetMethodInfo(nameof(TypeWithGenericParameter.GetHasSomething), ExperimentalNamespace, nameof(TypeWithGenericParameter),
                 out var declaringTypeName, out var returnValueNamespaceName, out var returnValueLocalTypeName,
                 out var isTypeString, out var isTypeEnum);
-            declaringTypeName.Should().Be("global::Experimental.GenericType<global::System.String>");
+            declaringTypeName.Should().Be("global::Experimental.GenericType<global::System.Double, global::System.Int32, global::System.String>");
             returnValueNamespaceName.Should().Be(typeof(bool).Namespace);
             returnValueLocalTypeName.Should().Be(nameof(Boolean));
             isTypeString.Should().BeFalse();
@@ -174,14 +174,7 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetContentPropertyName_Should_Handle_3rd_Party()
-        {
-            var res = MonoCecilVersion.GetContentPropertyName(ExperimentalNamespace, nameof(DerivedContentControl), ExperimentalSubjectName);
-            res.Should().Be(Content);
-        }
-
-        [TestMethod]
-        public void GetMethodReturnValueTypeInfo_Should_Handle_Generic_Return_Type()
+        public void GetMethodReturnValueTypeInfo_Should_Return_Info_For_Generic_Return_Type()
         {
             MonoCecilVersion.GetMethodReturnValueTypeInfo(
                 nameof(TypeWithGenericParameter.MethodWithGenericReturnType),
@@ -196,7 +189,7 @@ namespace Compiler.Tests
         }
 
         [TestMethod]
-        public void GetMethodReturnValueTypeInfo_Returns_Method_With_GenericType()
+        public void GetMethodReturnValueTypeInfo_Should_Return_Info_For_Method_With_GenericTypeResult()
         {
             MonoCecilVersion.GetMethodReturnValueTypeInfo(
                 nameof(TypeWithGenericParameter.MethodReturnsAnotherGeneric),

@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Experimental
 {
-    public class GenericType<T>
+    public class GenericType<K, B, T>
     {
         public T MyProperty { get; set; }
 
@@ -16,7 +16,7 @@ namespace Experimental
         public static readonly DependencyProperty HasSomethingProperty =
             DependencyProperty.RegisterAttached(
                 "HasSomething",
-                typeof(bool), typeof(GenericType<T>), null);
+                typeof(bool), typeof(GenericType<K, B, T>), null);
 
         public static bool GetHasSomething(UIElement target) =>
             (bool)target.GetValue(HasSomethingProperty);
