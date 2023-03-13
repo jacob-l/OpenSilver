@@ -140,7 +140,7 @@ namespace OpenSilver.Compiler
                         if (shouldTheFileBeProcessed)
                         {
                             // The "ReflectionOnSeparateAppDomainHandler" class lets us use a separate AppDomain to resolve the types so that the types can be unloaded when done (when disposed, it frees any hook on the user application DLL's):
-                            ReflectionOnSeparateAppDomainHandler reflectionOnSeparateAppDomain = ReflectionOnSeparateAppDomainHandler.Current; // Note: this is not supposed to be null because it was instantiated in the "BeforeXamlPreprocessor" task. We use a static instance to avoid reloading the assemblies for each XAML file that is processed.
+                            AssembliesInspector reflectionOnSeparateAppDomain = AssembliesInspector.Current; // Note: this is not supposed to be null because it was instantiated in the "BeforeXamlPreprocessor" task. We use a static instance to avoid reloading the assemblies for each XAML file that is processed.
 
                             // Make sure that the reference is not null:
                             if (reflectionOnSeparateAppDomain == null)
@@ -188,7 +188,7 @@ namespace OpenSilver.Compiler
                     issues when the user recompiles his application). So we free them now.
                  */
 
-                ReflectionOnSeparateAppDomainHandler.Current.Dispose(); // Note: this is not supposed to be null because it was instantiated in the "BeforeXamlPreprocessor" task.
+                AssembliesInspector.Current.Dispose(); // Note: this is not supposed to be null because it was instantiated in the "BeforeXamlPreprocessor" task.
 
                 //-----------------------------------------------------
                 // Display the error and cancel the Build process:
