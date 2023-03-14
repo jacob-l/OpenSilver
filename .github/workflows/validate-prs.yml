@@ -5,7 +5,7 @@ on:
   # Any pull request to develop
   pull_request:
     branches:
-      - develop
+      - develop2
 jobs:
   OpenSilver-Build:
     runs-on: windows-latest
