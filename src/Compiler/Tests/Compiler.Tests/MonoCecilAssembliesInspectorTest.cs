@@ -15,10 +15,16 @@
 using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Windows;
 using Experimental;
-using System.Windows.Controls;
 using OpenSilver.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspector;
+
+#if MIGRATION
+using System.Windows;
+using System.Windows.Controls;
+#else
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+#endif
 
 namespace Compiler.Tests
 {
@@ -30,7 +36,13 @@ namespace Compiler.Tests
         private const string ExperimentalNamespace = "Experimental";
         private const string Content = "Content";
 
-        private static readonly MonoCecilAssembliesInspectorImpl MonoCecilVersion = new(true);
+        private static readonly MonoCecilAssembliesInspectorImpl MonoCecilVersion = new(
+#if MIGRATION
+            true
+#else
+            false
+#endif
+        );
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext _)
@@ -49,7 +61,7 @@ namespace Compiler.Tests
         {
             var res = MonoCecilVersion.GetAssemblyQualifiedNameOfXamlType("http://schemas.microsoft.com/winfx/2006/xaml/presentation", nameof(Validation), null);
 
-            res.Should().Be("System.Windows.Controls.Validation, OpenSilver");
+            res.Should().Be(typeof(Validation).FullName + ", OpenSilver");
         }
 
         [TestMethod]
@@ -58,7 +70,7 @@ namespace Compiler.Tests
             MonoCecilVersion.GetAttachedPropertyGetMethodInfo(nameof(ToolTipService.GetPlacementTarget), "http://schemas.microsoft.com/winfx/2006/xaml/presentation", nameof(ToolTipService),
                 out var declaringTypeName, out var returnValueNamespaceName, out var returnValueLocalTypeName, out var isTypeString, out var isTypeEnum);
 
-            declaringTypeName.Should().Be("global::System.Windows.Controls.ToolTipService");
+            declaringTypeName.Should().Be("global::" + typeof(ToolTipService).FullName);
             returnValueNamespaceName.Should().Be(typeof(UIElement).Namespace);
             returnValueLocalTypeName.Should().Be(nameof(UIElement));
             isTypeString.Should().BeFalse();
