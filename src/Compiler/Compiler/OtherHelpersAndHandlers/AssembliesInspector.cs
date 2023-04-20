@@ -125,5 +125,10 @@ namespace OpenSilver.Compiler
 
         public string GetEventHandlerType(string eventName, string namespaceName, string typeName, string assemblyName)
             => _monoCecilVersion.GetEventHandlerType(eventName, namespaceName, typeName, assemblyName);
+
+        public string GetInternalConverterFullName(string namespaceName, string localTypeName, string propertyName,
+            string assemblyNameIfAny)
+            => _monoCecilVersion.GetInternalConverterFullName(namespaceName, localTypeName, propertyName,
+                assemblyNameIfAny);
     }
 }

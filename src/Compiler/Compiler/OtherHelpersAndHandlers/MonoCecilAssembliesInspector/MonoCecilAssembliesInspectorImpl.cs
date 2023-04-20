@@ -14,6 +14,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -737,6 +738,31 @@ namespace OpenSilver.Compiler.OtherHelpersAndHandlers.MonoCecilAssembliesInspect
             }
 
             return null;
+        }
+
+        public string GetInternalConverterFullName(string namespaceName, string localTypeName, string propertyName, string assemblyNameIfAny)
+        {
+            var type = FindType(namespaceName, localTypeName, assemblyNameIfAny);
+            if (type == null)
+            {
+                return null;
+            }
+
+            var property = FindPropertyDeep(type, propertyName, out _);
+            if (property == null)
+            {
+                return null;
+            }
+
+            var typeConverterAttribute = property.CustomAttributes.FirstOrDefault(ca =>
+                    ca.AttributeType.FullName == typeof(TypeConverterAttribute).FullName);
+
+            if (typeConverterAttribute == null)
+            {
+                return null;
+            }
+
+            return typeConverterAttribute.ConstructorArguments[0].Value.ToString();
         }
     }
 }

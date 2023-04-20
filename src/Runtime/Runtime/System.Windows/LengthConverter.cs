@@ -24,7 +24,7 @@ namespace Windows.UI.Xaml
     /// <summary>
     /// LengthConverter - Converter class for converting instances of other types to and from double representing length.
     /// </summary> 
-    internal sealed class LengthConverter : TypeConverter
+    public sealed class LengthConverter : TypeConverter
     {
         //-------------------------------------------------------------------
         //

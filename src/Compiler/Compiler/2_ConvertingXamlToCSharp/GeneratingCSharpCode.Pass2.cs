@@ -1541,9 +1541,9 @@ else
                         valueTypeFullName.Substring("global::".Length), valueAssemblyName
                     );
 
-                    string declaringTypeName = _reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlTypeAsString(
+                    /*string declaringTypeName = _reflectionOnSeparateAppDomain.GetCSharpEquivalentOfXamlTypeAsString(
                         namespaceName, localTypeName, assemblyNameIfAny
-                    );
+                    );*/
 
                     if (isAttachedProperty)
                     {
@@ -1553,11 +1553,32 @@ else
                     }
                     else
                     {
-                        return ConvertFromInvariantString(
-                            declaringTypeName, propertyName, value, valueTypeFullName, isKnownCoreType, isKnownSystemType
+                        var converterFullName = _reflectionOnSeparateAppDomain.GetInternalConverterFullName(
+                            namespaceName, localTypeName, propertyName, assemblyNameIfAny
+                        );
+
+                        return ConvertFromInvariantStringConverter(
+                            converterFullName, value, valueTypeFullName, isKnownCoreType,
+                            isKnownSystemType
                         );
                     }
                 }
+            }
+
+            private string ConvertFromInvariantStringConverter(
+                string converter,
+                string value,
+                string propertyType,
+                bool isKnownCoreType,
+                bool isKnownSystemType)
+            {
+                if (converter != null)
+                {
+                    return string.Format("({2})(new {0}().ConvertFromInvariantString({1}))", converter,
+                        EscapeString(value), propertyType);
+                }
+
+                return ConvertFromInvariantString(value, propertyType, isKnownCoreType, isKnownSystemType);
             }
 
             private void ChangeRelativePathIntoAbsolutePathIfNecessary(ref string path,
@@ -1787,25 +1808,6 @@ else
                 }
 
                 return preparedValue;
-            }
-
-            private string ConvertFromInvariantString(
-                string propertyDeclaringType,
-                string propertyName,
-                string value,
-                string propertyType,
-                bool isKnownCoreType,
-                bool isKnownSystemType)
-            {
-                return string.Format(
-                    "{0}.GetPropertyValue<{1}>(typeof({2}), {3}, {4}, () => {5})",
-                    RuntimeHelperClass,
-                    propertyType,
-                    propertyDeclaringType,
-                    EscapeString(propertyName),
-                    EscapeString(value),
-                    ConvertFromInvariantString(value, propertyType, isKnownCoreType, isKnownSystemType)
-                );
             }
 
             private bool IsEventTriggerRoutedEventProperty(string typeFullName, string propertyName)
