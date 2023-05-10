@@ -1329,7 +1329,11 @@ namespace System.ServiceModel
                 bool isXmlSerializer,
                 string soapVersion)
             {
-                if (e.Error == null)
+                if (e.Error != null && string.IsNullOrEmpty(e.Result))
+                {
+                    taskCompletionSource.TrySetException(e.Error);
+                }
+                else
                 {
                     T requestResponse = (T)ReadAndPrepareResponse(
                         e.Result,
@@ -1349,10 +1353,6 @@ namespace System.ServiceModel
                     {
                         taskCompletionSource.SetResult(requestResponse);
                     }
-                }
-                else
-                {
-                    taskCompletionSource.TrySetException(e.Error);
                 }
             }
 
@@ -1396,44 +1396,46 @@ namespace System.ServiceModel
 
             private FaultException GetFaultException(string response, bool useXmlSerializerFormat)
             {
-                FaultException fe = null;
                 const string ns = "http://schemas.xmlsoap.org/soap/envelope/";
 
                 VerifyThatResponseIsNotNullOrEmpty(response);
-                XElement faultElement = XDocument.Parse(response).Root
+                var faultElement = XDocument.Parse(response).Root
                                                  .Element(XName.Get("Body", ns))
                                                  .Element(XName.Get("Fault", ns));
 
-                if (faultElement != null)
+                if (faultElement == null)
                 {
-                    XElement detailElement = faultElement.Element(XName.Get("detail"));
-                    if (detailElement != null)
-                    {
-                        detailElement = detailElement.Elements().First();
-                        Type detailType = ResolveType(detailElement.Name, useXmlSerializerFormat);
-
-                        DataContractSerializerCustom serializer =
-                            new DataContractSerializerCustom(detailType, false);
-
-                        object detail = serializer.DeserializeFromXElement(detailElement);
-
-                        XElement faultStringElement = faultElement.Element(XName.Get("faultstring"));
-                        FaultReason reason = new FaultReason(
-                            new FaultReasonText(faultStringElement.Value,
-                                                faultStringElement.Attribute(XName.Get("lang", XNamespace.Xml.NamespaceName))
-                                                                  .Value));
-
-                        XElement faultCodeElement = faultElement.Element(XName.Get("faultcode"));
-                        FaultCode code = new FaultCode(faultCodeElement.Value);
-
-                        Type type = typeof(FaultException<>).MakeGenericType(detailType);
-
-
-                        fe = (FaultException)Activator.CreateInstance(type, new object[4] { detail, reason, code, null });
-                    }
+                    return new FaultException();
                 }
 
-                return fe ?? new FaultException();
+                var faultStringElement = faultElement.Element(XName.Get("faultstring"));
+                var faultReasonValue = faultStringElement?.Value;
+                var lang = faultStringElement?.Attribute(XName.Get("lang", XNamespace.Xml.NamespaceName))?.Value;
+                var faultReasonText = string.IsNullOrEmpty(lang)
+                    ? new FaultReasonText(faultReasonValue)
+                    : new FaultReasonText(faultReasonValue, lang);
+                var reason = new FaultReason(faultReasonText);
+
+                var faultCodeElement = faultElement.Element(XName.Get("faultcode"));
+                var code = new FaultCode(faultCodeElement?.Value);
+
+                var detailElement = faultElement.Element(XName.Get("detail"));
+                if (detailElement == null)
+                {
+                    return new FaultException(reason, code, null);
+                }
+
+                detailElement = detailElement.Elements().First();
+                var detailType = ResolveType(detailElement.Name, useXmlSerializerFormat);
+
+                var serializer = new DataContractSerializerCustom(detailType);
+
+                var detail = serializer.DeserializeFromXElement(detailElement);
+
+                var type = typeof(FaultException<>).MakeGenericType(detailType);
+
+                return (FaultException)Activator.CreateInstance(type, detail, reason, code, null);
+
             }
 
             private static Type ResolveType(XName name, bool useXmlSerializerFormat)
@@ -1472,6 +1474,22 @@ namespace System.ServiceModel
                 throw new InvalidOperationException(string.Format("Could not resolve type {0}", name));
             }
 #endif
+
+            private static string RemoveInvalidXmlChars(string input)
+            {
+                return new string(input.Where(ch => IsLegalXmlChar(ch)).ToArray());
+            }
+
+            private static bool IsLegalXmlChar(int character)
+            {
+                return
+                    character == 0x9 ||
+                    character == 0xA ||
+                    character == 0xD ||
+                    (character >= 0x20 && character <= 0xD7FF) ||
+                    (character >= 0xE000 && character <= 0xFFFD) ||
+                    (character >= 0x10000 && character <= 0x10FFFF);
+            }
 
             private object ReadAndPrepareResponse(
                 string responseAsString,
@@ -1531,6 +1549,8 @@ namespace System.ServiceModel
                                     string.Format("Unexpected soap version ({0}) !", soapVersion));
                     NS = "http://www.w3.org/2003/05/soap-envelope";
                 }
+
+                responseAsString = responseAsString.Replace("&#x1A;", "");
 
                 XElement envelopeElement = XDocument.Parse(responseAsString).Root;
                 XElement headerElement = envelopeElement.Element(XName.Get("Header", NS));
