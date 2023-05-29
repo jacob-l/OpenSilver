@@ -86,13 +86,12 @@ namespace CSHTML5.Internal
                     string startupAssemblyShortName = StartupAssemblyInfo.StartupAssemblyShortName;
                     if (!string.IsNullOrEmpty(startupAssemblyShortName))
                     {
-                        html5Path = startupAssemblyShortName + "/" + html5Path.ToLower();
+                        html5Path = startupAssemblyShortName + "/" + html5Path;
                     }
                 }
                 else
                 {
-                    // Make sure the portion of the path AFTER the assembly name is lowercase:
-                    html5Path = assemblyName + "/" + pathAfterAssemblyName.ToLower();
+                    html5Path = assemblyName + "/" + pathAfterAssemblyName;
                 }
 
                 // Get the relative path where the resources are located (such as "Resources/"), and ensure that it ends with "/":
@@ -142,13 +141,13 @@ namespace CSHTML5.Internal
                     string startupAssemblyShortName = StartupAssemblyInfo.StartupAssemblyShortName;
                     if (!string.IsNullOrEmpty(startupAssemblyShortName))
                     {
-                        html5Path = startupAssemblyShortName + "/" + html5Path.ToLower();
+                        html5Path = startupAssemblyShortName + "/" + html5Path;
                     }
                 }
                 else
                 {
                     // Make sure the portion of the path AFTER the assembly name is lowercase:
-                    html5Path = assemblyName + "/" + pathAfterAssemblyName.ToLower();
+                    html5Path = assemblyName + "/" + pathAfterAssemblyName;
                 }
 
                 // Get the relative path where the resources are located (such as "Resources/"), and ensure that it ends with "/":
@@ -368,7 +367,7 @@ namespace CSHTML5.Internal
                 if (pathLowercase.Contains("/" + assemblyShortName.ToLower() + "/"))
                 {
                     assemblyName = assemblyShortName; // Note: here we deliberately do not call "ToLower()".
-                    pathAfterAssemblyName = pathLowercase.Substring(assemblyName.Length + 2); // + 2 because we want to remove "/assemblyName/"
+                    pathAfterAssemblyName = path.Substring(assemblyName.Length + 2); // + 2 because we want to remove "/assemblyName/"
                     return true;
                 }
             }

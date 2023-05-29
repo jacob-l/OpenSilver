@@ -100,6 +100,8 @@ namespace Runtime.OpenSilver.Tests
             {
                 RootVisual = new Grid(),
             };
+
+            StartupAssemblyInfo.OutputResourcesPath = "resources";
         }
 
         public static void AttachVisualChild(UIElement element)
