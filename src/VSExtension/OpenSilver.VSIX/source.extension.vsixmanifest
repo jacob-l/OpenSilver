@@ -57,5 +57,6 @@
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="OpenSilver.TemplateWizards" Path="|OpenSilver.TemplateWizards|" AssemblyName="|OpenSilver.TemplateWizards;AssemblyName|" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="OpenSilverVBApplicationTemplate" d:TargetPath="|OpenSilverVBApplicationTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="OpenSilverVBClassLibraryTemplate" d:TargetPath="|OpenSilverVBClassLibraryTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Userware.XamlDesigner.SplitXamlEditor.OpenSilver" Path="|Userware.XamlDesigner.SplitXamlEditor.OpenSilver|" AssemblyName="|Userware.XamlDesigner.SplitXamlEditor.OpenSilver;AssemblyName|" />
     </Assets>
 </PackageManifest>
