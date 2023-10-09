@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="OpenSilver.64201874-6ead-4828-b5af-31a76285b73d" Version="1.2.2.0" Language="en-US" Publisher="Userware" />
+        <Identity Id="OpenSilver.64201874-6ead-4828-b5af-31a76285b73d" Version="1.2.2.15" Language="en-US" Publisher="Userware" />
         <DisplayName>OpenSilver</DisplayName>
         <Description xml:space="preserve">Project templates for creating OpenSilver applications. OpenSilver is an open-source reimplementation of Silverlight that runs on current browsers via WebAssembly.</Description>
         <Icon>Logo_32x32.png</Icon>
@@ -57,5 +57,7 @@
         <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="OpenSilver.TemplateWizards" Path="|OpenSilver.TemplateWizards|" AssemblyName="|OpenSilver.TemplateWizards;AssemblyName|" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="OpenSilverVBApplicationTemplate" d:TargetPath="|OpenSilverVBApplicationTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
         <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="OpenSilverVBClassLibraryTemplate" d:TargetPath="|OpenSilverVBClassLibraryTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="File" Path="OpenSilver.XamlDesigner.pkgdef" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="OpenSilver.XamlDesigner" Path="|OpenSilver.XamlDesigner|" AssemblyName="|OpenSilver.XamlDesigner;AssemblyName|" />
     </Assets>
 </PackageManifest>

@@ -130,14 +130,30 @@
     <Content Include="Nuget.Config">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="OpenSilver.XamlDesigner.pkgdef">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Userware.XamlDesigner\src\Userware.XamlDesigner.SplitXamlEditor\Userware.XamlDesigner.SplitXamlEditor.OpenSilver.csproj">
+      <Project>{756A216F-62A2-4277-8F48-D1CE0D5565AF}</Project>
+      <Name>Userware.XamlDesigner.SplitXamlEditor.OpenSilver</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3bPkgdefProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
     <ProjectReference Include="..\OpenSilver.TemplateWizards\OpenSilver.TemplateWizards.csproj">
       <Project>{5BCC3CB3-6BB0-4382-8FBA-62D8D5071C23}</Project>
       <Name>OpenSilver.TemplateWizards</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenSilver.XamlDesigner\OpenSilver.XamlDesigner.csproj">
+      <Project>{847E5D86-8189-405A-A4CA-F1823712E1EE}</Project>
+      <Name>OpenSilver.XamlDesigner</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
