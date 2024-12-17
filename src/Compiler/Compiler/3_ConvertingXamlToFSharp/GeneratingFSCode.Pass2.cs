@@ -693,13 +693,13 @@ namespace GlobalResource
                                                                 element);
                                                         }
                                                         else
-                                                            throw new XamlParseException(@"The <Setter> element must declare a ""Property"" attribute.");
+                                                            throw new XamlParseException(@"The <Setter> element must declare a ""Property"" attribute.", element);
                                                     }
                                                     else
-                                                        throw new XamlParseException(@"The <Setter> element cannot have attributes other than ""Property"" and ""Value"".");
+                                                        throw new XamlParseException(@"The <Setter> element cannot have attributes other than ""Property"" and ""Value"".", element);
                                                 }
                                                 else
-                                                    throw new XamlParseException(@"""<Setter/>"" tags can only be declared inside a <Style/>.");
+                                                    throw new XamlParseException(@"""<Setter/>"" tags can only be declared inside a <Style/>.", element);
                                             }
                                             else if (elementTypeInCSharp == $"global.{_settings.Metadata.SystemWindowsDataNS}.Binding"
                                                 && memberName == "Path")
@@ -1554,14 +1554,14 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                     currentXElement = setterElement;
                     attributeToLookAt = currentXElement.Attribute("Property");
                     if (attributeToLookAt == null)
-                        throw new XamlParseException("Setter must declare a Property.");
+                        throw new XamlParseException("Setter must declare a Property.", currentXElement);
                 }
                 else
                 {
                     currentXElement = setterElement.Parent.Parent;
                     attributeToLookAt = currentXElement.Attribute("TargetType");
                     if (attributeToLookAt == null)
-                        throw new XamlParseException("Style must declare a TargetType.");
+                        throw new XamlParseException("Style must declare a TargetType.", currentXElement);
                 }
 
                 string attributeTypeString;
@@ -1578,7 +1578,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                         }
                         else
                         {
-                            throw new XamlParseException(@"Namespaces or prefixes must be followed by a type.");
+                            throw new XamlParseException(@"Namespaces or prefixes must be followed by a type.", attributeToLookAt);
                         }
                     }
                     else
@@ -1599,7 +1599,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
             {
                 var targetTypeAttribute = styleElement.Attribute(isDataType ? "DataType" : "TargetType");
                 if (targetTypeAttribute == null)
-                    throw new XamlParseException(isDataType ? "DataTemplate must declare a DataType or have a key." : "Style must declare a TargetType.");
+                    throw new XamlParseException(isDataType ? "DataTemplate must declare a DataType or have a key." : "Style must declare a TargetType.", styleElement);
 
                 GetClrNamespaceAndLocalName(targetTypeAttribute.Value,
                     styleElement,
@@ -1658,7 +1658,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                 }
                 else
                 {
-                    throw new XamlParseException("Each dictionary entry must have an associated key. The element named '" + element.Name.LocalName + "' does not have a key.");
+                    throw new XamlParseException("Each dictionary entry must have an associated key. The element named '" + element.Name.LocalName + "' does not have a key.", element);
                 }
             }
 
@@ -1728,7 +1728,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                                 valueAssemblyName,
                                 true,
                                 false) ?? throw new XamlParseException(
-                                    $"Field '{split[i].Trim()}' not found in type: '{valueTypeFullName}'.");
+                                    $"Field '{split[i].Trim()}' not found in type: '{valueTypeFullName}'.", elementWhereTheTypeIsUsed);
 
                             split[i] = fieldName;
                         }
@@ -1746,7 +1746,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                             true);
 
                         return fieldName ?? throw new XamlParseException(
-                            $"Field '{value.Trim()}' not found in type: '{valueTypeFullName}'.");
+                            $"Field '{value.Trim()}' not found in type: '{valueTypeFullName}'.", elementWhereTheTypeIsUsed);
                     }
                 }
                 else if (valueTypeFullName == "global.System.Type")
@@ -2253,7 +2253,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
             {
                 if (element.Attribute("Member") is not XAttribute member)
                 {
-                    throw new XamlParseException("StaticExtension must have Member property set.");
+                    throw new XamlParseException("StaticExtension must have Member property set.", element);
                 }
 
                 string fieldString;
@@ -2271,14 +2271,14 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                     int dotIndex = member.Value.IndexOf('.');
                     if (dotIndex < 0)
                     {
-                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property");
+                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property", member);
                     }
 
                     // Pull out the type substring (this will include any XML prefix, e.g. "av:Button")
                     string typeString = member.Value.Substring(0, dotIndex);
                     if (string.IsNullOrEmpty(typeString))
                     {
-                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property");
+                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property", member);
                     }
 
                     type = GetTypeDefinitionFromString(element, typeString);
@@ -2287,7 +2287,7 @@ if not ({RuntimeHelperClass}.TrySetMarkupExtension({parentElementUniqueNameOrThi
                     fieldString = member.Value.Substring(dotIndex + 1, member.Value.Length - dotIndex - 1);
                     if (string.IsNullOrEmpty(typeString))
                     {
-                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property");
+                        throw new XamlParseException($"'{member.Value}' StaticExtension value cannot be resolved to an enumeration, static field, or static property", member);
                     }
                 }
 

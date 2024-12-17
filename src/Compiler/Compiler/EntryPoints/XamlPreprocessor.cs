@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading;
 using System.Linq;
 using System.Diagnostics;
+using System.Xml;
 
 namespace OpenSilver.Compiler
 {
@@ -176,19 +177,20 @@ namespace OpenSilver.Compiler
                         processedFile.SetMetadata(CompiledXamlFilePathMetadata, generatedFile.ItemSpec);
                         processedFiles.Add(processedFile);
                     }
+                    catch (XmlException xmlException)
+                    {
+                        Log.LogError(string.Empty, "OS0002", string.Empty, sourceFile, xmlException.LineNumber, xmlException.LinePosition, 0, 0, xmlException.Message);
+                    }
+                    catch (XamlParseException xamlException)
+                    {
+                        int lineNumber = xamlException.LineNumber;
+                        int columnNumber = xamlException.LinePosition;
+                        string message = $"{string.Join(Environment.NewLine, GetInnerExceptions(xamlException).Select(e => e.Message))}";
+                        Log.LogError(string.Empty, "OS0001", string.Empty, sourceFile, lineNumber, columnNumber, 0, 0, message);
+                    }
                     catch (Exception ex)
                     {
-                        if (ex is XamlParseException xamlException)
-                        {
-                            int lineNumber = xamlException.LineNumber;
-                            int columnNumber = xamlException.LinePosition;
-                            string message = $"{string.Join(Environment.NewLine, GetInnerExceptions(ex).Select(e => e.Message))}";
-                            Log.LogError(string.Empty, string.Empty, string.Empty, sourceFile, lineNumber, columnNumber, 0, 0, message);
-                        }
-                        else
-                        {
-                            Log.LogErrorFromException(ex, true, true, sourceFile);
-                        }
+                        Log.LogErrorFromException(ex, true, true, sourceFile);
                     }
                 }
             }

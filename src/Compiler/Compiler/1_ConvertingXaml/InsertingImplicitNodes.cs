@@ -200,7 +200,8 @@ namespace OpenSilver.Compiler
                                 if (currentElement.Attribute(contentPropertyName) != null)
                                 {
                                     throw new XamlParseException(
-                                        string.Format("The property '{0}' is set more than once.", contentPropertyName)
+                                        string.Format("The property '{0}' is set more than once.", contentPropertyName),
+                                        currentElement.Attribute(contentPropertyName)
                                     );
                                 }
 
@@ -221,7 +222,8 @@ namespace OpenSilver.Compiler
                             else
                             {
                                 throw new XamlParseException(
-                                    string.Format("The element '{0}' does not support direct content.", currentElement.Name)
+                                    string.Format("The element '{0}' does not support direct content.", currentElement.Name),
+                                    currentElement
                                 );
                             }
                         }
@@ -265,7 +267,7 @@ namespace OpenSilver.Compiler
                     // Verify that the attribute is not already set:
                     if (currentElement.Attribute(xName.LocalName) != null)
                     {
-                        throw new XamlParseException($"The property '{xName.LocalName}' is set more than once.");
+                        throw new XamlParseException($"The property '{xName.LocalName}' is set more than once.", currentElement.Attribute(xName.LocalName));
                     }
 
                     // Add the attribute

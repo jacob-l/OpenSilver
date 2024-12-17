@@ -237,7 +237,7 @@ namespace OpenSilver.Compiler
                     }
                     catch (Exception ex)
                     {
-                        throw new XamlParseException("Error in the following markup extension: \"" + currentAttribute + "\". " + ex.Message);
+                        throw new XamlParseException("Error in the following markup extension: \"" + currentAttribute + "\". " + ex.Message, currentElement);
                     }
                 }
                 else //it can be directly set as an attribute because it is not a markupExtension:
@@ -316,13 +316,13 @@ namespace OpenSilver.Compiler
                     else
                     {
                         // Unknown prefix.
-                        throw new XamlParseException(string.Format("Unknown prefix '{0}' in '{1}'", prefix, nameThatMayHaveAPrefix));
+                        throw new XamlParseException(string.Format("Unknown prefix '{0}' in '{1}'", prefix, nameThatMayHaveAPrefix), currentElement);
                     }
                 }
                 else
                 {
                     // Empty prefix.
-                    throw new XamlParseException(string.Format("Empty prefix in '{1}'", prefix, nameThatMayHaveAPrefix));
+                    throw new XamlParseException(string.Format("Empty prefix in '{1}'", prefix, nameThatMayHaveAPrefix), currentElement);
                 }
             }
             else
