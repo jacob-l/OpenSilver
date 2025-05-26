@@ -87,9 +87,15 @@
     </ResourcesExtractorAndCopier>
 
     <ItemGroup>
-      <MauiAsset Include="@(_OpenSilverStaticWebAssets)" />
+      <_InvalidFilePaths Include="@(_OpenSilverStaticWebAssets)"
+                         Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Filename)%(Extension)', '[^a-z0-9_.]'))" />
     </ItemGroup>
 
-  </Target>
+    <Warning Condition="'@(_InvalidFilePaths)' != ''"
+             Text="The following files have names that contain invalid characters (only lowercase letters, numbers, underscore, and period are allowed): @(_InvalidFilePaths->'%(Identity)', ', ')" />
 
+    <ItemGroup>
+      <MauiAsset Include="@(_OpenSilverStaticWebAssets)" />
+    </ItemGroup>
+  </Target>
 </Project>

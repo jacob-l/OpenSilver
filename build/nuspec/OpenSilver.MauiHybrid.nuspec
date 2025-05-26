@@ -41,7 +41,7 @@
     <file src="../../src/Runtime/Scripts/html2canvas.js" target="content/js/html2canvas.js" />
     <file src="../../src/Runtime/Scripts/quill.min.js" target="content/js/quill.min.js" />
     <file src="../../src/Runtime/Scripts/quill.core.css" target="content/css/quill.core.css" />
-    <file src="../../src/Runtime/Scripts/FileSaver.min.js" target="content/js/FileSaver.min.js" />
+    <file src="../../src/Runtime/Scripts/FileSaver.min.js" target="content/js/filesaver.min.js" />
     <file src="../../src/Maui/Hybrid/wwwroot/libs/mauihybrid.js" target="content/js/mauihybrid.js" />
 
     <!-- Package icon -->
