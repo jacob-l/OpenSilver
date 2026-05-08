@@ -20,31 +20,35 @@ namespace OpenSilver.Compiler
 {
     internal static class GeneratingUniqueNames
     {
+        private static int Counter = 0;
+
         // Note: we use '.' to make sure this attribute is not colliding with
         // any property defined by the user.
         public static readonly XName UniqueNameAttribute = GeneratingCode.xNamespace.GetName("__.UniqueName.__");
 
         public static void ProcessDocument(XDocument doc)
         {
-            TraverseNextElement(doc.Root);
+            TraverseNextElement(doc.Root, "");
         }
 
-        private static void TraverseNextElement(XElement currentElement)
+        private static void TraverseNextElement(XElement currentElement, string path)
         {
             // If the current element is an object (rather than a property)
             if (!currentElement.Name.LocalName.Contains("."))
             {
                 // Generate unique name
-                string uniqueName = GenerateUniqueName(currentElement.Name.LocalName);
+                string uniqueName = currentElement.Name.LocalName + "_" + path;
 
                 // Assign unique name
                 currentElement.SetAttributeValue(UniqueNameAttribute, uniqueName);
             }
 
+            var counter = 0;
             // Recursion:
             foreach (var childElements in currentElement.Elements())
             {
-                TraverseNextElement(childElements);
+                TraverseNextElement(childElements, path + "_" + counter);
+                counter++;
             }
         }
 
@@ -58,7 +62,7 @@ namespace OpenSilver.Compiler
             }
 
             // Because of f# warning, makes the first letter lower case
-            return $"{char.ToLower(prefix[0])}{prefix.Slice(1)}_{Guid.NewGuid():N}"; // Example: Button_4541C363579C48A981219C392BF8ACD5
+            return $"{char.ToLower(prefix[0])}{prefix.Slice(1)}_{Counter++}"; // Example: Button_4541C363579C48A981219C392BF8ACD5
         }
     }
 }
